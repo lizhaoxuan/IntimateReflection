@@ -1,21 +1,28 @@
 package me.ele.intimate.apt.model;
 
+import java.util.List;
+
 /**
  * Created by lizhaoxuan on 2017/12/18.
  */
 
-public class RefField {
+public class RefFieldModel {
 
     private String name;
     private boolean needThrow;
     private String type;
     private boolean isSet;
+    private List<String> parameterTypes;
 
-    public RefField(String name, boolean needThrow, String type, boolean isSet) {
+    public RefFieldModel(String name, boolean needThrow, String type, boolean isSet) {
         this.name = name;
         this.needThrow = needThrow;
         this.type = type;
         this.isSet = isSet;
+    }
+
+    public void setParameterTypes(List<String> parameterTypes) {
+        this.parameterTypes = parameterTypes;
     }
 
     public String getName() {
@@ -32,5 +39,9 @@ public class RefField {
 
     public boolean isSet() {
         return isSet;
+    }
+
+    public List<String> getParameterTypes() {
+        return parameterTypes;
     }
 }

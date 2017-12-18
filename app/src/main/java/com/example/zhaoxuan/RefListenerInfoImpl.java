@@ -10,11 +10,11 @@ import me.ele.intimate.BaseRefImpl;
  * Created by lizhaoxuan on 2017/12/15.
  */
 
-public class RefListenerInfo$$Impl extends BaseRefImpl<RefListenerInfo> implements RefListenerInfo {
+public class RefListenerInfoImpl extends BaseRefImpl implements RefListenerInfo {
 
     Field mOnClickListener;
 
-    public RefListenerInfo$$Impl(Object mObject) throws ClassNotFoundException {
+    public RefListenerInfoImpl(Object mObject) throws ClassNotFoundException {
         super(mObject, Class.forName("android.view.View$ListenerInfo"));
     }
 

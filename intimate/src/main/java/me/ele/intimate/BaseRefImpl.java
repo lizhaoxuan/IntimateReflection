@@ -1,4 +1,4 @@
-package com.example.zhaoxuan;
+package me.ele.intimate;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,19 +17,15 @@ public class BaseRefImpl {
         this.mClass = mClass;
     }
 
-    protected Method getMethod(String methodName, Class... parameterTypes) throws NoSuchMethodException {
-        Method method = mClass.getMethod(methodName, parameterTypes);
+    protected Method getRefMethod(String methodName, Class... parameterTypes) throws NoSuchMethodException {
+        Method method = mClass.getDeclaredMethod(methodName, parameterTypes);
         method.setAccessible(true);
         return method;
     }
 
     protected Field getField(String fieldName) throws NoSuchFieldException {
-        Field field = mClass.getField(fieldName);
+        Field field = mClass.getDeclaredField(fieldName);
         field.setAccessible(true);
         return field;
-    }
-
-    protected void throwException(Exception e){
-
     }
 }

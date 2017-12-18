@@ -1,23 +1,23 @@
 package me.ele.intimate.apt.model;
 
+import java.util.List;
+
 /**
  * Created by lizhaoxuan on 2017/12/18.
  */
 
-public class RefMethod {
+public class RefMethodModel {
 
     private String name;
     private boolean needThrow;
     private String returnType;
-    private String[] parameterTypes;
-    private boolean isSet;
+    private List<String> parameterTypes;
 
-    public RefMethod(String name, boolean needThrow, String returnType, String[] parameterTypes, boolean isSet) {
+    public RefMethodModel(String name, boolean needThrow, String returnType, List<String> parameterTypes) {
         this.name = name;
         this.needThrow = needThrow;
         this.returnType = returnType;
         this.parameterTypes = parameterTypes;
-        this.isSet = isSet;
     }
 
     public String getName() {
@@ -32,11 +32,8 @@ public class RefMethod {
         return returnType;
     }
 
-    public String[] getParameterTypes() {
+    public List<String> getParameterTypes() {
         return parameterTypes;
     }
 
-    public boolean isSet() {
-        return isSet;
-    }
 }

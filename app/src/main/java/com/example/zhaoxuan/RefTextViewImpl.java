@@ -10,14 +10,14 @@ import me.ele.intimate.IntimateException;
  * Created by lizhaoxuan on 2017/12/15.
  */
 
-public class RefTextView$$Impl extends BaseRefImpl implements RefTextView {
+public class RefTextViewImpl extends BaseRefImpl implements RefTextView {
 
     Field mText;
     Field mListenerInfo;
     Method getDesiredHeight;
     Method isDirectionalNavigationKey;
 
-    public RefTextView$$Impl(Object mTextView) {
+    public RefTextViewImpl(Object mTextView) {
         super(mTextView, android.widget.TextView.class);
     }
 
@@ -81,7 +81,7 @@ public class RefTextView$$Impl extends BaseRefImpl implements RefTextView {
     public int isDirectionalNavigationKey(int keyCode) throws IntimateException {
         try {
             if (isDirectionalNavigationKey == null) {
-                isDirectionalNavigationKey = getRefMethods("isDirectionalNavigationKey", int.class);
+                isDirectionalNavigationKey = getRefMethod("isDirectionalNavigationKey", int.class);
             }
             return (int) isDirectionalNavigationKey.invoke(mObject, keyCode);
         } catch (Exception e) {
