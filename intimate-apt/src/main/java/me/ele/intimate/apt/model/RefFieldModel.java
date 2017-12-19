@@ -1,6 +1,6 @@
 package me.ele.intimate.apt.model;
 
-import java.util.List;
+import javax.lang.model.type.TypeMirror;
 
 /**
  * Created by lizhaoxuan on 2017/12/18.
@@ -10,19 +10,25 @@ public class RefFieldModel {
 
     private String name;
     private boolean needThrow;
-    private String type;
+    private String methodName;
+    private CName type;
     private boolean isSet;
-    private List<String> parameterTypes;
+    private CName parameterType;
 
-    public RefFieldModel(String name, boolean needThrow, String type, boolean isSet) {
+    public RefFieldModel(String name, String methodName, boolean needThrow, TypeMirror type, boolean isSet) {
         this.name = name;
         this.needThrow = needThrow;
-        this.type = type;
+        this.methodName = methodName;
         this.isSet = isSet;
+        this.type = new CName(type);
     }
 
-    public void setParameterTypes(List<String> parameterTypes) {
-        this.parameterTypes = parameterTypes;
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setParameterTypes(CName parameterTypes) {
+        this.parameterType = parameterTypes;
     }
 
     public String getName() {
@@ -33,7 +39,7 @@ public class RefFieldModel {
         return needThrow;
     }
 
-    public String getType() {
+    public CName getType() {
         return type;
     }
 
@@ -41,7 +47,7 @@ public class RefFieldModel {
         return isSet;
     }
 
-    public List<String> getParameterTypes() {
-        return parameterTypes;
+    public CName getParameterType() {
+        return parameterType;
     }
 }

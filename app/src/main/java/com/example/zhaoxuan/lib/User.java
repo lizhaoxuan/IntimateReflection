@@ -42,4 +42,8 @@ public class User {
     public Object getClassName$IntimateMethod() {
         return getClassName();
     }
+
+    public void println() {
+        System.out.println("ssss");
+    }
 }

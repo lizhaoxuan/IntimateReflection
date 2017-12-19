@@ -1,7 +1,9 @@
 package me.ele.intimate.apt;
 
 import com.google.auto.service.AutoService;
+import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -23,11 +25,13 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic;
 
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
 import me.ele.intimate.annotation.RefTarget;
 import me.ele.intimate.annotation.SetField;
+import me.ele.intimate.apt.model.CName;
 import me.ele.intimate.apt.model.RefFieldModel;
 import me.ele.intimate.apt.model.RefMethodModel;
 import me.ele.intimate.apt.model.RefTargetModel;
@@ -58,22 +62,39 @@ public class IntimateProcesser extends AbstractProcessor {
         processMethod(roundEnvironment);
         processGetField(roundEnvironment);
         processSetField(roundEnvironment);
+//        mMessager.printMessage(Diagnostic.Kind.NOTE, new Gson().toJson(targetModelMap));
 
-        return false;
+        for (RefTargetModel model : targetModelMap.values()) {
+            if (model.isSystemClass()) {
+                try {
+                    new GenerateSystemCode(model).generate().writeTo(mFiler);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+//                try {
+//                    GenerateCode.generate(model).writeTo(mFiler);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        }
+
+        return true;
     }
 
     private void processRefTarget(RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(RefTarget.class)) {
             TypeElement classElement = (TypeElement) element;
             RefTarget refTarget = classElement.getAnnotation(RefTarget.class);
-            String interfaceName = classElement.getQualifiedName().toString();
-            RefTargetModel model = new RefTargetModel(interfaceName,
+            String interfaceFullName = classElement.getQualifiedName().toString();
+            RefTargetModel model = new RefTargetModel(interfaceFullName,
                     refTarget.className(),
                     refTarget.needForName(),
                     refTarget.isSystemClass(),
                     refTarget.needThrow());
 
-            targetModelMap.put(interfaceName, model);
+            targetModelMap.put(interfaceFullName, model);
         }
     }
 
@@ -87,7 +108,7 @@ public class IntimateProcesser extends AbstractProcessor {
             Method method = executableElement.getAnnotation(Method.class);
 
             //获取参数列表
-            List<String> parameterTypes = getParameterTypes(executableElement);
+            List<CName> parameterTypes = getParameterTypes(executableElement);
             //获取name
             String name = method.value();
             if ("".equals(name)) {
@@ -96,7 +117,7 @@ public class IntimateProcesser extends AbstractProcessor {
 
             RefMethodModel methodModel = new RefMethodModel(name,
                     method.needThrow(),
-                    executableElement.getReturnType().toString(),
+                    executableElement.getReturnType(),
                     parameterTypes);
             targetModel.addMethod(methodModel);
         }
@@ -112,8 +133,9 @@ public class IntimateProcesser extends AbstractProcessor {
             GetField field = executableElement.getAnnotation(GetField.class);
 
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
+                    executableElement.getSimpleName().toString(),
                     field.needThrow(),
-                    executableElement.getReturnType().toString(),
+                    executableElement.getReturnType(),
                     false);
             targetModel.addField(fieldModel);
         }
@@ -129,13 +151,16 @@ public class IntimateProcesser extends AbstractProcessor {
             ExecutableElement executableElement = (ExecutableElement) element;
             SetField field = executableElement.getAnnotation(SetField.class);
             //获取参数列表
-            List<String> parameterTypes = getParameterTypes(executableElement);
+            List<CName> parameterTypes = getParameterTypes(executableElement);
 
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
+                    executableElement.getSimpleName().toString(),
                     field.needThrow(),
-                    executableElement.getReturnType().toString(),
+                    executableElement.getReturnType(),
                     true);
-            fieldModel.setParameterTypes(parameterTypes);
+            if (parameterTypes.size() > 0) {
+                fieldModel.setParameterTypes(parameterTypes.get(0));
+            }
             targetModel.addField(fieldModel);
         }
     }
@@ -143,9 +168,9 @@ public class IntimateProcesser extends AbstractProcessor {
     /**
      * 获取参数列表
      */
-    private List<String> getParameterTypes(ExecutableElement executableElement) {
+    private List<CName> getParameterTypes(ExecutableElement executableElement) {
         List<? extends VariableElement> methodParameters = executableElement.getParameters();
-        List<String> parameterTypes = new ArrayList<>();
+        List<CName> parameterTypes = new ArrayList<>();
         for (VariableElement variableElement : methodParameters) {
             TypeMirror methodParameterType = variableElement.asType();
             if (methodParameterType instanceof TypeVariable) {
@@ -153,7 +178,7 @@ public class IntimateProcesser extends AbstractProcessor {
                 methodParameterType = typeVariable.getUpperBound();
 
             }
-            parameterTypes.add(methodParameterType.toString());
+            parameterTypes.add(new CName(methodParameterType));
         }
         return parameterTypes;
     }

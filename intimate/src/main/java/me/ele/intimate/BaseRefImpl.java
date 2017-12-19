@@ -17,7 +17,7 @@ public class BaseRefImpl {
         this.mClass = mClass;
     }
 
-    protected Method getRefMethod(String methodName, Class... parameterTypes) throws NoSuchMethodException {
+    protected Method getMethod(String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
         Method method = mClass.getDeclaredMethod(methodName, parameterTypes);
         method.setAccessible(true);
         return method;

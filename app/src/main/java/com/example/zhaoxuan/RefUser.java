@@ -29,4 +29,7 @@ public interface RefUser {
     @Method
     String getClassName();
 
+    @Method
+    void println();
+
 }

@@ -67,7 +67,7 @@ public class RefTextViewImpl extends BaseRefImpl implements RefTextView {
     public int getDesiredHeight() {
         try {
             if (getDesiredHeight == null) {
-                getDesiredHeight = getRefMethod("getDesiredHeight");
+                getDesiredHeight = getMethod("getDesiredHeight");
             }
             return (int) getDesiredHeight.invoke(mObject);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class RefTextViewImpl extends BaseRefImpl implements RefTextView {
     public int isDirectionalNavigationKey(int keyCode) throws IntimateException {
         try {
             if (isDirectionalNavigationKey == null) {
-                isDirectionalNavigationKey = getRefMethod("isDirectionalNavigationKey", int.class);
+                isDirectionalNavigationKey = getMethod("isDirectionalNavigationKey", int.class);
             }
             return (int) isDirectionalNavigationKey.invoke(mObject, keyCode);
         } catch (Exception e) {

@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.text);
+        textView = (TextView) findViewById(R.id.text);
 
         try {
             RefTextView refTextView = RefImplFactory.getRefImplThrows(textView, RefTextView.class);
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
 
         User user = new User("kaka", "男", 19, "三年二班");
 

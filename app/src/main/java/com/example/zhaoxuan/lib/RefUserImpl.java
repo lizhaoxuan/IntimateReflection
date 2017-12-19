@@ -50,4 +50,9 @@ public class RefUserImpl extends BaseRefImpl implements RefUser {
     public String getClassName() {
         return (String) mData.getClassName$IntimateMethod();
     }
+
+    @Override
+    public void println() {
+        mData.println();
+    }
 }
