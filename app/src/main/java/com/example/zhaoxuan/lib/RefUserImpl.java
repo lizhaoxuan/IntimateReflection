@@ -17,10 +17,6 @@ public class RefUserImpl extends BaseRefImpl implements RefUser {
         mData = (User) mObject;
     }
 
-    public User getObject() {
-        return (User) mObject;
-    }
-
     @Override
     public String getName() {
         return (String) mData.getName$IntimateField();
@@ -32,8 +28,8 @@ public class RefUserImpl extends BaseRefImpl implements RefUser {
     }
 
     @Override
-    public String setSex(String sex) {
-        return mData.sex = sex;
+    public void setSex(String sex) {
+        mData.sex = sex;
     }
 
     @Override

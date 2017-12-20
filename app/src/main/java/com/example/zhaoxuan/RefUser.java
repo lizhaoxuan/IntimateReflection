@@ -18,7 +18,7 @@ public interface RefUser {
     String getSex();
 
     @SetField("sex")
-    String setSex(String sex);
+    void setSex(String sex);
 
     @Method
     String getAgeStr();

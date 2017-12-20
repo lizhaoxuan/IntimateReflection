@@ -1,9 +1,13 @@
 package me.ele.intimate.apt;
 
 import com.google.auto.service.AutoService;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -26,6 +30,8 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
@@ -46,6 +52,7 @@ public class IntimateProcesser extends AbstractProcessor {
     private Elements mElementUtils; //元素相关的辅助类
     private Messager mMessager; //日志相关的辅助类
     private Map<String, RefTargetModel> targetModelMap = new LinkedHashMap<>();
+    private Element element;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -62,7 +69,23 @@ public class IntimateProcesser extends AbstractProcessor {
         processMethod(roundEnvironment);
         processGetField(roundEnvironment);
         processSetField(roundEnvironment);
-//        mMessager.printMessage(Diagnostic.Kind.NOTE, new Gson().toJson(targetModelMap));
+
+        if (targetModelMap.size() == 0) {
+            return true;
+        }
+
+        try {
+            FileObject fileObject = mFiler.getResource(StandardLocation.CLASS_OUTPUT, "",
+                    "intimate/intimate.json");
+            mMessager.printMessage(Diagnostic.Kind.OTHER, "output intimate.json dir: " + fileObject.toUri().toString());
+            File file = new File(fileObject.toUri());
+            Files.createParentDirs(file);
+            Writer writer = Files.newWriter(file, Charsets.UTF_8);
+            new Gson().toJson(targetModelMap, writer);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for (RefTargetModel model : targetModelMap.values()) {
             if (model.isSystemClass()) {
@@ -72,11 +95,11 @@ public class IntimateProcesser extends AbstractProcessor {
                     e.printStackTrace();
                 }
             } else {
-//                try {
-//                    GenerateCode.generate(model).writeTo(mFiler);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    new GenerateCode(model).generate().writeTo(mFiler);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -85,6 +108,9 @@ public class IntimateProcesser extends AbstractProcessor {
 
     private void processRefTarget(RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(RefTarget.class)) {
+            if (this.element == null) {
+                this.element = element;
+            }
             TypeElement classElement = (TypeElement) element;
             RefTarget refTarget = classElement.getAnnotation(RefTarget.class);
             String interfaceFullName = classElement.getQualifiedName().toString();

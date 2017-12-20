@@ -16,7 +16,7 @@ public class TypeUtil {
 
     public static String typeDefaultValue(CName cName) {
         if (cName.isPrimitive) {
-            if (cName.typeName == TypeName.VOID) return "return null;";
+            if (cName.typeName == TypeName.VOID) return "";
             if (cName.typeName == TypeName.BOOLEAN) return "return false;";
             if (cName.typeName == TypeName.BYTE) return "return 0;";
             if (cName.typeName == TypeName.SHORT) return "return 0;";
@@ -25,7 +25,9 @@ public class TypeUtil {
             if (cName.typeName == TypeName.CHAR) return "return 0;";
             if (cName.typeName == TypeName.FLOAT) return "return 0;";
             if (cName.typeName == TypeName.DOUBLE) return "return 0;";
+        } else if (cName.fullName.equals("void")) {
+            return "";
         }
-        return "return null";
+        return "return null;";
     }
 }
