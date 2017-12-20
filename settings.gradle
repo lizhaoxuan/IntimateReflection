@@ -1,1 +1,1 @@
-include ':app', ':intimate', ':intimate-apt'
+include ':app', ':intimate', ':intimate-apt', ':intimate-plugin'
