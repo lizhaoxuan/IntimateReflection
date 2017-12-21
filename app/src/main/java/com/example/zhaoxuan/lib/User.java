@@ -35,6 +35,7 @@ public class User {
         return name;
     }
 
+    //生成的方法
     public Object getAge$IntimateField() {
         return age;
     }
