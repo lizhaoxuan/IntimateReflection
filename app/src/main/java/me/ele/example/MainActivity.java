@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import me.ele.example.lib.User;
 import me.ele.intimate.IntimateException;
 import me.ele.intimate.RefImplFactory;
@@ -40,5 +42,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TAG", "getClassName: " + refUser.getClassName());
 
 
+        RefGson refGson = RefImplFactory.getRefImpl(new Gson(), RefGson.class);
+        Log.d("TAG", "getDefaultLenient:" + refGson.getDefaultLenient());
     }
 }

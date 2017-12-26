@@ -54,10 +54,8 @@ public class JarInject {
         }
 
         for (CtField field : ctFields) {
-            println("field.name：" + field.name)
             if (intimateField.contains(field.name)) {
-                println("Modifiers : " + field.name)
-                field.setModifiers(AccessFlag.PUBLIC)
+                field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
                 tempIntimateField.add(field.name)
             }
         }

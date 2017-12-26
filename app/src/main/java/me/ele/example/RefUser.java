@@ -14,8 +14,14 @@ public interface RefUser {
     @GetField("name")
     String getName();
 
+    @SetField("name")
+    void setName(String value);
+
     @GetField("sex")
     String getSex();
+
+    @GetField("age")
+    int getAge();
 
     @SetField("sex")
     void setSex(String sex);

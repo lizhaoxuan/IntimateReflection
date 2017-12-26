@@ -193,9 +193,6 @@ public class IntimateProcesser extends AbstractProcessor {
         }
     }
 
-    /**
-     * 获取参数列表
-     */
     private List<CName> getParameterTypes(ExecutableElement executableElement) {
         List<? extends VariableElement> methodParameters = executableElement.getParameters();
         List<CName> parameterTypes = new ArrayList<>();

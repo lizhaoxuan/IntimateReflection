@@ -106,7 +106,7 @@ public class ClassInject {
 
         for (CtField field : c.getDeclaredFields()) {
             if (intimateField.contains(field.name)) {
-                field.setModifiers(AccessFlag.PUBLIC)
+                field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
                 tempIntimateField.add(field.name)
             }
         }
