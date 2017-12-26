@@ -100,8 +100,6 @@ public class IntimateTransform extends Transform {
                 }
             }
         }
-
-        println("todoListss:" + todoList)
     }
 
     private

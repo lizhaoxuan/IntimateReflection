@@ -12,7 +12,6 @@ import javassist.bytecode.AccessFlag
 public class ClassInject {
 
     public static void injectDir(String path, packageIndex, intimateConfig, todoList) {
-        println("path:" + path)
         IntimateTransform.pool.appendClassPath(path)
         File dir = new File(path)
         def tempTodoList = []
@@ -77,7 +76,6 @@ public class ClassInject {
         for (CtMethod method : c.getDeclaredMethods()) {
             if (methodList.contains(method.name)) {
                 String code = contentMap.get(method.name)
-                println("code: " + code)
                 method.setBody(code)
             }
         }
