@@ -1,0 +1,1 @@
+include ':app', ':intimate', ':intimate-compiler', ':intimate-annotation', ':intimate-plugin'
