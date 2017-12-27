@@ -52,7 +52,7 @@ public class RefMethodModel {
             builder.append("return mData.").append(name).append("(");
         }
         if (parameterTypes != null && parameterTypes.size() > 0) {
-            for (int i = 0; i < parameterTypes.size(); i++) {
+            for (int i = 1; i <= parameterTypes.size(); i++) {
                 builder.append("$").append(i);
                 if (i != parameterTypes.size()) {
                     builder.append(",");

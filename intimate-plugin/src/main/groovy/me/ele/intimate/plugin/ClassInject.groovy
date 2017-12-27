@@ -52,7 +52,6 @@ public class ClassInject {
         }
         CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
         String code = generateCreateRefImplCode(DataSource.implMap)
-        println("code:" + code)
         ctMethods.insertBefore(code)
 
         c.writeFile(path)
@@ -111,46 +110,50 @@ public class ClassInject {
     }
 
     private static void processTarget(CtClass c) {
-        def intimateField = []
+        def intimateFieldMap = [:]
+        def intimateFieldList = []
         def tempIntimateField = []
         //TODO 暂时只判断了名字，没考虑参数
         def intimateMethod = []
         def tempIntimateMethod = []
 
         DataSource.intimateConfig.each { key, value ->
-            for (def filedConfig : value.fieldList) {
-                intimateField.add(filedConfig.name)
+            if (key == c.name) {
+                for (def filedConfig : value.fieldList) {
+                    intimateFieldList.add(filedConfig.name)
+                    intimateFieldMap.put(filedConfig.name, filedConfig.type.fullName)
+                }
+                //TODO 未考虑重载函数
+                for (def methodConfig : value.methodList) {
+                    intimateMethod.add(methodConfig.name)
+                }
             }
-            //TODO 未考虑重载函数
-            for (def methodConfig : value.methodList) {
-                intimateMethod.add(methodConfig.name)
-            }
-        }
-
-        for (def filedConfig : DataSource.intimateConfig.fieldList) {
-            intimateField.add(filedConfig.name)
         }
 
         for (CtField field : c.getDeclaredFields()) {
-            if (intimateField.contains(field.name)) {
+            if (field.getType().name == intimateFieldMap.get(field.name)) {
                 field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
                 tempIntimateField.add(field.name)
             }
         }
-//        intimateField.removeAll(tempIntimateField)
-//        if (intimateField.size() != 0) {
-//            String msgFields = ""
-//            for (String str : intimateField) {
-//                msgFields += str + "  "
-//            }
-//            ThrowExecutionError.throwError(c.name + " not found field:" + msgFields)
-//        }
+        println("tempIntimateField:" + tempIntimateField)
+        intimateFieldList.removeAll(tempIntimateField)
+        if (intimateFieldList.size() != 0) {
+            StringBuilder msgBuilder = new StringBuilder();
+            for (String str : intimateFieldList) {
+                msgBuilder.append("[").append(intimateFieldMap.get(str))
+                        .append("  ").append(str).append("] \n")
+            }
+            ThrowExecutionError.throwError(c.name + " not found field:" + msgBuilder.toString())
+        }
 
 
         for (def methodConfig : DataSource.intimateConfig.methodList) {
             intimateMethod.add(methodConfig.name)
         }
-        for (CtMethod method : c.getDeclaredMethods()) {
+        for (
+                CtMethod method
+                        : c.getDeclaredMethods()) {
             if (intimateMethod.contains(method.name)) {
                 method.setModifiers(AccessFlag.PUBLIC)
                 tempIntimateMethod.add(method.name)

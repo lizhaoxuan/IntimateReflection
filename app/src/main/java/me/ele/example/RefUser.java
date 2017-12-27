@@ -11,6 +11,9 @@ import me.ele.intimate.annotation.SetField;
 @RefTarget(className = "me.ele.example.lib.User", isSystemClass = false)
 public interface RefUser {
 
+    @Method
+    void setAge(int a, int b);
+
     @GetField("name")
     String getName();
 

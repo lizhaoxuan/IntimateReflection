@@ -29,7 +29,6 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
@@ -80,7 +79,6 @@ public class IntimateProcesser extends AbstractProcessor {
         try {
             FileObject fileObject = mFiler.getResource(StandardLocation.CLASS_OUTPUT, "",
                     "intimate/intimate.json");
-            mMessager.printMessage(Diagnostic.Kind.OTHER, "output intimate.json dir: " + fileObject.toUri().toString());
             File file = new File(fileObject.toUri());
             Files.createParentDirs(file);
             Writer writer = Files.newWriter(file, Charsets.UTF_8);
@@ -164,11 +162,16 @@ public class IntimateProcesser extends AbstractProcessor {
             }
             ExecutableElement executableElement = (ExecutableElement) element;
             GetField field = executableElement.getAnnotation(GetField.class);
+            List<CName> parameterTypes = getParameterTypes(executableElement);
+            if (parameterTypes.size() > 0) {
+                Throw.error("@GetField Don't need parameter.  method:"
+                        + executableElement.getSimpleName().toString());
+            }
 
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
                     executableElement.getSimpleName().toString(),
                     field.needThrow(),
-                    executableElement.getReturnType(),
+                    new CName(executableElement.getReturnType()),
                     false,
                     executableElement.getReturnType());
             targetModel.addField(fieldModel);
@@ -186,23 +189,24 @@ public class IntimateProcesser extends AbstractProcessor {
             SetField field = executableElement.getAnnotation(SetField.class);
             List<CName> parameterTypes = getParameterTypes(executableElement);
 
+            if (parameterTypes.size() == 0) {
+                Throw.error("@SetField must have a parameter.method:" + executableElement.getSimpleName().toString());
+            }
+
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
                     executableElement.getSimpleName().toString(),
                     field.needThrow(),
-                    executableElement.getReturnType(),
+                    parameterTypes.get(0),
                     true,
                     executableElement.getReturnType());
-            if (parameterTypes.size() > 0) {
-                fieldModel.setParameterTypes(parameterTypes.get(0));
-            }
+
+            fieldModel.setParameterTypes(parameterTypes.get(0));
             targetModel.addField(fieldModel);
         }
     }
 
     private void processRefFactoryShell(RoundEnvironment roundEnv) {
-        mMessager.printMessage(Diagnostic.Kind.OTHER, "processRefFactoryShell");
         for (Element element : roundEnv.getElementsAnnotatedWith(RefFactoryShell.class)) {
-
             TypeElement classElement = (TypeElement) element;
             outputClass.refFactoryShellName = classElement.getQualifiedName().toString();
         }

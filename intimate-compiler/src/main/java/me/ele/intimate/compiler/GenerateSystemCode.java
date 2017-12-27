@@ -73,7 +73,7 @@ public class GenerateSystemCode {
                 methodSpec.addParameter(fieldModel.getParameterType().typeName, "arg");
             }
             if (fieldModel.isSet()) {
-                methodSpec.returns(fieldModel.getType().typeName);
+                methodSpec.returns(fieldModel.getReturnType().typeName);
                 methodSpec.beginControlFlow("try")
                         .beginControlFlow("if($N == null)", fieldModel.getName())
                         .addStatement("$N = getField($S)", fieldModel.getName(), fieldModel.getName())
@@ -87,7 +87,7 @@ public class GenerateSystemCode {
                     methodSpec.addStatement("e.printStackTrace()");
                 }
                 methodSpec.endControlFlow();
-                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getType()));
+                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getReturnType()));
             } else {
                 methodSpec.returns(fieldModel.getType().typeName);
                 methodSpec.beginControlFlow("try")

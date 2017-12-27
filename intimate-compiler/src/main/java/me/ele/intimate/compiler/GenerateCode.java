@@ -65,7 +65,7 @@ public class GenerateCode {
             }
             if (fieldModel.isSet()) {
                 methodSpec.returns(fieldModel.getReturnType().typeName);
-                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getType()));
+                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getReturnType()));
             } else {
                 methodSpec.returns(fieldModel.getType().typeName);
                 methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getType()));

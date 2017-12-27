@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TAG", "getSexStr: " + refUser.getSexStr());
         refUser.setSex("你猜猜");
         Log.d("TAG", "getSex：" + refUser.getSex());
-        Log.d("TAG", "getAgeStr: " + refUser.getAgeStr());
+        refUser.setAge(1, 2);
+        Log.d("TAG", "getAge: " + refUser.getAge());
         Log.d("TAG", "getClassName: " + refUser.getClassName());
 
 

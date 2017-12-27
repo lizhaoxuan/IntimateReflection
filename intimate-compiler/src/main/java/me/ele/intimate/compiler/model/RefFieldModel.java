@@ -19,15 +19,15 @@ public class RefFieldModel {
     private CName parameterType;
     private String methodContentCode;
 
-    public RefFieldModel(String name, String methodName, boolean needThrow, TypeMirror type, boolean isSet, TypeMirror returnType) {
+    public RefFieldModel(String name, String methodName, boolean needThrow, CName type, boolean isSet, TypeMirror returnType) {
         this.name = name;
         this.needThrow = needThrow;
         this.methodName = methodName;
         this.isSet = isSet;
-        this.type = new CName(type);
+        this.type = type;
         this.returnType = new CName(returnType);
         if (isSet) {
-            this.methodContentCode = "mData." + this.name + " = $1;" + TypeUtil.typeDefaultValue(this.returnType);
+            this.methodContentCode = "{mData." + this.name + " = $1;" + TypeUtil.typeDefaultValue(this.returnType) + "}";
         } else {
             this.methodContentCode = "return mData." + name + ";";
         }

@@ -19,6 +19,10 @@ public class User {
         this.className = className;
     }
 
+    private void setAge(int a, int b) {
+        this.age = a + b;
+    }
+
     String getAgeStr() {
         return String.valueOf(age + 1);
     }
