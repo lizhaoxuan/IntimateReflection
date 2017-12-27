@@ -11,7 +11,7 @@ import javassist.bytecode.AccessFlag
 
 public class ClassInject {
 
-    public static void injectDir(String path, packageIndex, intimateConfig, todoList) {
+    public static void injectDir(String path, packageIndex) {
         IntimateTransform.pool.appendClassPath(path)
         File dir = new File(path)
         def tempTodoList = []
@@ -27,8 +27,11 @@ public class ClassInject {
                     String className = filePath.substring(packageIndex, end)
                             .replace('/', '.').replace('/', '.')
                     // 判断是否是需要处理的类
-                    if (todoList.contains(className)) {
-                        processClass(className, path, intimateConfig, todoList)
+                    if (DataSource.refFactoryShellName == className) {
+                        processFactory(className, path)
+                    }
+                    if (DataSource.todoList.contains(className)) {
+                        processClass(className, path)
                         tempTodoList.add(className)
                     }
 //                    //从todoList中删除已经处理过的
@@ -38,8 +41,34 @@ public class ClassInject {
         }
     }
 
-    private static void processClass(String className, String path,
-                                     intimateConfig, todoList) {
+    private static void processFactory(String className, String path) {
+        CtClass c = IntimateTransform.pool.getCtClass(className)
+        if (c.isFrozen()) {
+            c.defrost()
+        }
+
+        if (DataSource.implMap.size() == 0) {
+            return
+        }
+        CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
+        String code = generateCreateRefImplCode(DataSource.implMap)
+        println("code:" + code)
+        ctMethods.insertBefore(code)
+
+        c.writeFile(path)
+        c.detach()
+    }
+
+    private static String generateCreateRefImplCode(implMap) {
+        StringBuilder builder = new StringBuilder()
+        implMap.each { key, value ->
+            builder.append("if(\$2.equals(\"").append(key).append("\")){ ")
+                    .append("return new ").append(value).append("(\$1);} \n")
+        }
+        return builder.toString()
+    }
+
+    private static void processClass(String className, String path) {
         CtClass c = IntimateTransform.pool.getCtClass(className)
         if (c.isFrozen()) {
             c.defrost()
@@ -47,21 +76,21 @@ public class ClassInject {
 
         if (className.contains("\$\$Intimate")) {
             println("processImpl:" + className)
-            processImpl(c, intimateConfig)
+            processImpl(c)
         } else {
             println("processTarget:" + className)
-            processTarget(c, intimateConfig)
+            processTarget(c)
         }
 
         c.writeFile(path)
         c.detach()
     }
 
-    private static void processImpl(CtClass c, intimateConfig) {
+    private static void processImpl(CtClass c) {
         //TODO 未考虑重载函数
         def contentMap = [:]
         def methodList = []
-        intimateConfig.each { key, value ->
+        DataSource.intimateConfig.each { key, value ->
             for (def filedConfig : value.fieldList) {
                 methodList.add(filedConfig.methodName)
                 contentMap.put(filedConfig.methodName, filedConfig.methodContentCode)
@@ -81,14 +110,14 @@ public class ClassInject {
         }
     }
 
-    private static void processTarget(CtClass c, intimateConfig) {
+    private static void processTarget(CtClass c) {
         def intimateField = []
         def tempIntimateField = []
         //TODO 暂时只判断了名字，没考虑参数
         def intimateMethod = []
         def tempIntimateMethod = []
 
-        intimateConfig.each { key, value ->
+        DataSource.intimateConfig.each { key, value ->
             for (def filedConfig : value.fieldList) {
                 intimateField.add(filedConfig.name)
             }
@@ -98,7 +127,7 @@ public class ClassInject {
             }
         }
 
-        for (def filedConfig : intimateConfig.fieldList) {
+        for (def filedConfig : DataSource.intimateConfig.fieldList) {
             intimateField.add(filedConfig.name)
         }
 
@@ -118,7 +147,7 @@ public class ClassInject {
 //        }
 
 
-        for (def methodConfig : intimateConfig.methodList) {
+        for (def methodConfig : DataSource.intimateConfig.methodList) {
             intimateMethod.add(methodConfig.name)
         }
         for (CtMethod method : c.getDeclaredMethods()) {

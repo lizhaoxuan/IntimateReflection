@@ -17,8 +17,6 @@ public class IntimateTransform extends Transform {
 
     public static ClassPool pool = ClassPool.getDefault()
     Project project
-    def static intimateConfig = [:]
-    def static todoList = []
 
     public IntimateTransform(Project project) {
         this.project = project
@@ -85,15 +83,17 @@ public class IntimateTransform extends Transform {
                     configFile.eachLine("UTF-8") {
                         content.append(it)
                     }
-                    def config = new JsonSlurper().parseText(content.toString())
-                    config.each { key, value ->
+                    def data = new JsonSlurper().parseText(content.toString())
+                    DataSource.refFactoryShellName = data.refFactoryShellName
+                    data.targetModelMap.each { key, value ->
+                        DataSource.implMap.put(value.interfaceName.fullName, value.implPackageName + "." + value.implClassName)
                         if (!value.isSystemClass) {
-                            intimateConfig.put(value.targetName.fullName, value)
-                            if (!todoList.contains(value.implPackageName + "." + value.implClassName)) {
-                                todoList.add(value.implPackageName + "." + value.implClassName)
+                            DataSource.intimateConfig.put(value.targetName.fullName, value)
+                            if (!DataSource.todoList.contains(value.implPackageName + "." + value.implClassName)) {
+                                DataSource.todoList.add(value.implPackageName + "." + value.implClassName)
                             }
-                            if (!todoList.contains(value.targetName.fullName)) {
-                                todoList.add(value.targetName.fullName)
+                            if (!DataSource.todoList.contains(value.targetName.fullName)) {
+                                DataSource.todoList.add(value.targetName.fullName)
                             }
                         }
                     }
@@ -105,18 +105,16 @@ public class IntimateTransform extends Transform {
     private
     static void processClassFile(DirectoryInput directoryInput, TransformOutputProvider outputProvider) {
         int packageIndex = directoryInput.file.absolutePath.toString().length() + 1
-        ClassInject.injectDir(directoryInput.file.absolutePath, packageIndex, intimateConfig, todoList)
+        ClassInject.injectDir(directoryInput.file.absolutePath, packageIndex)
 
         def dest = outputProvider.getContentLocation(directoryInput.name,
                 directoryInput.contentTypes, directoryInput.scopes,
                 Format.DIRECTORY)
 
-        // 将input的目录复制到output指定目录
         FileUtils.copyDirectory(directoryInput.file, dest)
     }
 
     private static void processJar(JarInput jarInput, TransformOutputProvider outputProvider) {
-        // 重命名输出文件（同目录copyFile会冲突）
         def jarName = jarInput.name
         def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
         if (jarName.endsWith(".jar")) {
@@ -124,16 +122,11 @@ public class IntimateTransform extends Transform {
         }
         def dest = outputProvider.getContentLocation(jarName + md5Name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
 
-//        def status = jarInput.getStatus()
-//        if (status == Status.REMOVED) {
-//            FileUtils.delete(dest)
-//        } else {
         String jarPath = jarInput.file.absolutePath
         if (jarPath.endsWith(".jar")) {
-            JarInject.injectJar(jarPath, intimateConfig, todoList)
+            JarInject.injectJar(jarPath)
         }
 
         FileUtils.copyFile(jarInput.file, dest)
-//        }
     }
 }

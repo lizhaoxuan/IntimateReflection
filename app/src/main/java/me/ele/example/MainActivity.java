@@ -19,8 +19,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView) findViewById(R.id.text);
+        textView = findViewById(R.id.text);
 
+        RefImplFactory.setFactoryShell(new RefFactoryImpl());
         try {
             RefTextView refTextView = RefImplFactory.getRefImplThrows(textView, RefTextView.class);
             refTextView.getText();

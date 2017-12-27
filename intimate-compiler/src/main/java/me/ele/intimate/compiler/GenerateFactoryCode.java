@@ -12,6 +12,7 @@ import static me.ele.intimate.Constant.INTIMATE_PACKAGE;
 import static me.ele.intimate.Constant.IREF_IMPL_FACTORY_CLASS_NAME;
 import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
 import static me.ele.intimate.compiler.TypeUtil.I_REF_IMPL_FACTORY;
+import static me.ele.intimate.compiler.TypeUtil.LOG;
 
 /**
  * Created by lizhaoxuan on 2017/12/18.
@@ -52,7 +53,7 @@ public class GenerateFactoryCode {
                     .addStatement("return new $N(object)", entry.getValue())
                     .endControlFlow();
         }
-        methodSpec.addStatement("System.out.println($S + name)", "not found ");
+        methodSpec.addStatement("$T.w($S,$S + name)", LOG, "Intimate", "not found ");
         methodSpec.addStatement("return null");
         implClass.addMethod(methodSpec.build());
     }

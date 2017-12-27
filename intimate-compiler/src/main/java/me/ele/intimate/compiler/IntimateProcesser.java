@@ -35,6 +35,7 @@ import javax.tools.StandardLocation;
 
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
+import me.ele.intimate.annotation.RefFactoryShell;
 import me.ele.intimate.annotation.RefTarget;
 import me.ele.intimate.annotation.SetField;
 import me.ele.intimate.compiler.model.CName;
@@ -53,6 +54,7 @@ public class IntimateProcesser extends AbstractProcessor {
     private Messager mMessager;
     private Map<String, RefTargetModel> targetModelMap = new LinkedHashMap<>();
     private Element element;
+    private IntimateOutputClass outputClass = new IntimateOutputClass();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -69,6 +71,7 @@ public class IntimateProcesser extends AbstractProcessor {
         processMethod(roundEnvironment);
         processGetField(roundEnvironment);
         processSetField(roundEnvironment);
+        processRefFactoryShell(roundEnvironment);
 
         if (targetModelMap.size() == 0) {
             return true;
@@ -81,7 +84,8 @@ public class IntimateProcesser extends AbstractProcessor {
             File file = new File(fileObject.toUri());
             Files.createParentDirs(file);
             Writer writer = Files.newWriter(file, Charsets.UTF_8);
-            new Gson().toJson(targetModelMap, writer);
+            outputClass.targetModelMap = targetModelMap;
+            new Gson().toJson(outputClass, writer);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -193,6 +197,15 @@ public class IntimateProcesser extends AbstractProcessor {
         }
     }
 
+    private void processRefFactoryShell(RoundEnvironment roundEnv) {
+        mMessager.printMessage(Diagnostic.Kind.OTHER, "processRefFactoryShell");
+        for (Element element : roundEnv.getElementsAnnotatedWith(RefFactoryShell.class)) {
+
+            TypeElement classElement = (TypeElement) element;
+            outputClass.refFactoryShellName = classElement.getQualifiedName().toString();
+        }
+    }
+
     private List<CName> getParameterTypes(ExecutableElement executableElement) {
         List<? extends VariableElement> methodParameters = executableElement.getParameters();
         List<CName> parameterTypes = new ArrayList<>();
@@ -227,5 +240,10 @@ public class IntimateProcesser extends AbstractProcessor {
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.RELEASE_7;
+    }
+
+    private class IntimateOutputClass {
+        Map<String, RefTargetModel> targetModelMap = new LinkedHashMap<>();
+        String refFactoryShellName;
     }
 }

@@ -18,13 +18,13 @@ public class JarInject {
      * 这里需要将jar包先解压，注入代码后再重新生成jar包
      * @path jar包的绝对路径
      */
-    public static void injectJar(String path, intimateConfig, todoList) {
+    public static void injectJar(String path) {
         if (path.endsWith(".jar")) {
             // 注入代码
-            for (String className : todoList) {
+            for (String className : DataSource.todoList) {
                 try {
                     CtClass ctClass = IntimateTransform.pool.getCtClass(className)
-                    processClass(ctClass, intimateConfig)
+                    processClass(ctClass)
                 } catch (NotFoundException e) {
 //                    println(path + "notFound factory")
                 }
@@ -32,22 +32,22 @@ public class JarInject {
         }
     }
 
-    private static void processClass(CtClass c, intimateConfig) {
+    private static void processClass(CtClass c) {
         if (c.isFrozen()) {
             c.defrost()
         }
 
-        processFields(c.getDeclaredFields(), intimateConfig, c.name)
-        processMethods(c.getDeclaredMethods(), intimateConfig, c.name)
+        processFields(c.getDeclaredFields(), c.name)
+        processMethods(c.getDeclaredMethods(), c.name)
 
         c.writeFile()
         c.detach()
     }
 
-    private static void processFields(CtField[] ctFields, intimateConfig, className) {
+    private static void processFields(CtField[] ctFields, className) {
         def intimateField = []
         def tempIntimateField = []
-        intimateConfig.each { key, value ->
+        DataSource.intimateConfig.each { key, value ->
             for (def filedConfig : value.fieldList) {
                 intimateField.add(filedConfig.name)
             }
@@ -69,12 +69,12 @@ public class JarInject {
 //        }
     }
 
-    private static void processMethods(CtMethod[] ctMethods, intimateConfig, String className) {
+    private static void processMethods(CtMethod[] ctMethods, String className) {
         //TODO 暂时只判断了名字，没考虑参数
         def intimateMethod = []
         def tempIntimateMethod = []
-        intimateConfig.each { key, value ->
-            for (def methodConfig : intimateConfig.methodList) {
+        DataSource.intimateConfig.each { key, value ->
+            for (def methodConfig : value.methodList) {
                 intimateMethod.add(methodConfig.name)
             }
         }
