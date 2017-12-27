@@ -3,13 +3,14 @@ package me.ele.intimate.compiler;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import me.ele.intimate.compiler.model.RefFieldModel;
-import me.ele.intimate.compiler.model.RefMethodModel;
-import me.ele.intimate.compiler.model.RefTargetModel;
 
 import java.util.List;
 
 import javax.lang.model.element.Modifier;
+
+import me.ele.intimate.compiler.model.RefFieldModel;
+import me.ele.intimate.compiler.model.RefMethodModel;
+import me.ele.intimate.compiler.model.RefTargetModel;
 
 import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
 
@@ -62,7 +63,10 @@ public class GenerateCode {
             if (fieldModel.getParameterType() != null) {
                 methodSpec.addParameter(fieldModel.getParameterType().typeName, "arg");
             }
-            if (!fieldModel.isSet()) {
+            if (fieldModel.isSet()) {
+                methodSpec.returns(fieldModel.getReturnType().typeName);
+                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getType()));
+            } else {
                 methodSpec.returns(fieldModel.getType().typeName);
                 methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getType()));
             }

@@ -17,7 +17,7 @@ public interface RefTextView {
     CharSequence getText();
 
     @SetField("mText")
-    void setText(CharSequence result);
+    String setText(CharSequence result);
 
     @GetField("mListenerInfo")
     Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException, IntimateException;

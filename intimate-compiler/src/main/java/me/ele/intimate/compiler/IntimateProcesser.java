@@ -169,7 +169,8 @@ public class IntimateProcesser extends AbstractProcessor {
                     executableElement.getSimpleName().toString(),
                     field.needThrow(),
                     executableElement.getReturnType(),
-                    false);
+                    false,
+                    executableElement.getReturnType());
             targetModel.addField(fieldModel);
         }
 
@@ -189,7 +190,8 @@ public class IntimateProcesser extends AbstractProcessor {
                     executableElement.getSimpleName().toString(),
                     field.needThrow(),
                     executableElement.getReturnType(),
-                    true);
+                    true,
+                    executableElement.getReturnType());
             if (parameterTypes.size() > 0) {
                 fieldModel.setParameterTypes(parameterTypes.get(0));
             }

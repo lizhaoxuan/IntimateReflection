@@ -2,6 +2,8 @@ package me.ele.intimate.compiler.model;
 
 import javax.lang.model.type.TypeMirror;
 
+import me.ele.intimate.compiler.TypeUtil;
+
 /**
  * Created by lizhaoxuan on 2017/12/18.
  */
@@ -12,21 +14,27 @@ public class RefFieldModel {
     private boolean needThrow;
     private String methodName;
     private CName type;
+    private CName returnType;
     private boolean isSet;
     private CName parameterType;
     private String methodContentCode;
 
-    public RefFieldModel(String name, String methodName, boolean needThrow, TypeMirror type, boolean isSet) {
+    public RefFieldModel(String name, String methodName, boolean needThrow, TypeMirror type, boolean isSet, TypeMirror returnType) {
         this.name = name;
         this.needThrow = needThrow;
         this.methodName = methodName;
         this.isSet = isSet;
         this.type = new CName(type);
+        this.returnType = new CName(returnType);
         if (isSet) {
-            this.methodContentCode = "mData." + this.name + " = $1;";
+            this.methodContentCode = "mData." + this.name + " = $1;" + TypeUtil.typeDefaultValue(this.returnType);
         } else {
             this.methodContentCode = "return mData." + name + ";";
         }
+    }
+
+    public CName getReturnType() {
+        return returnType;
     }
 
     public String getMethodName() {
