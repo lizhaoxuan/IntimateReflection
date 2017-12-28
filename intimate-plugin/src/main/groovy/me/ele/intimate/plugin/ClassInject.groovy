@@ -51,20 +51,11 @@ public class ClassInject {
             return
         }
         CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
-        String code = generateCreateRefImplCode(DataSource.implMap)
+        String code = GenerateUtils.generateCreateRefImplCode(DataSource.implMap)
         ctMethods.insertBefore(code)
 
         c.writeFile(path)
         c.detach()
-    }
-
-    private static String generateCreateRefImplCode(implMap) {
-        StringBuilder builder = new StringBuilder()
-        implMap.each { key, value ->
-            builder.append("if(\$2.equals(\"").append(key).append("\")){ ")
-                    .append("return new ").append(value).append("(\$1);} \n")
-        }
-        return builder.toString()
     }
 
     private static void processClass(String className, String path) {
@@ -94,7 +85,7 @@ public class ClassInject {
                 methodList.add(filedConfig.methodName)
                 contentMap.put(filedConfig.methodName, filedConfig.methodContentCode)
             }
-            //TODO 未考虑重载函数
+
             for (def methodConfig : value.methodList) {
                 methodList.add(methodConfig.name)
                 contentMap.put(methodConfig.name, methodConfig.methodContentCode)
@@ -110,64 +101,56 @@ public class ClassInject {
     }
 
     private static void processTarget(CtClass c) {
-        def intimateFieldMap = [:]
         def intimateFieldList = []
-        def tempIntimateField = []
-        //TODO 暂时只判断了名字，没考虑参数
-        def intimateMethod = []
-        def tempIntimateMethod = []
+        def intimateMethodList = []
 
         DataSource.intimateConfig.each { key, value ->
             if (key == c.name) {
                 for (def filedConfig : value.fieldList) {
-                    intimateFieldList.add(filedConfig.name)
-                    intimateFieldMap.put(filedConfig.name, filedConfig.type.fullName)
+                    intimateFieldList.add(GenerateUtils.generateFieldInfo(filedConfig))
                 }
-                //TODO 未考虑重载函数
                 for (def methodConfig : value.methodList) {
-                    intimateMethod.add(methodConfig.name)
+                    intimateMethodList.add(GenerateUtils.generateMethodInfo(methodConfig))
                 }
             }
         }
+
+        processTargetField(c, intimateFieldList)
+        processTargetMethod(c, intimateMethodList)
+    }
+
+    private static void processTargetField(CtClass c, intimateFieldList) {
+        def tempIntimateField = []
 
         for (CtField field : c.getDeclaredFields()) {
-            if (field.getType().name == intimateFieldMap.get(field.name)) {
+            String fieldStr = GenerateUtils.generateFieldInfo(field)
+            if (intimateFieldList.contains(fieldStr)) {
                 field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
-                tempIntimateField.add(field.name)
+                tempIntimateField.add(fieldStr)
             }
         }
-        println("tempIntimateField:" + tempIntimateField)
+
         intimateFieldList.removeAll(tempIntimateField)
         if (intimateFieldList.size() != 0) {
-            StringBuilder msgBuilder = new StringBuilder();
-            for (String str : intimateFieldList) {
-                msgBuilder.append("[").append(intimateFieldMap.get(str))
-                        .append("  ").append(str).append("] \n")
-            }
-            ThrowExecutionError.throwError(c.name + " not found field:" + msgBuilder.toString())
+            ThrowExecutionError.throwError(c.name + " not found field:" + GenerateUtils.generateNotFoundFieldError(intimateFieldList))
         }
-
-
-        for (def methodConfig : DataSource.intimateConfig.methodList) {
-            intimateMethod.add(methodConfig.name)
-        }
-        for (
-                CtMethod method
-                        : c.getDeclaredMethods()) {
-            if (intimateMethod.contains(method.name)) {
-                method.setModifiers(AccessFlag.PUBLIC)
-                tempIntimateMethod.add(method.name)
-            }
-        }
-
-//        intimateMethod.removeAll(tempIntimateMethod)
-//        if (intimateMethod.size() != 0) {
-//            String msgMethods = ""
-//            for (String str : intimateMethod) {
-//                msgMethods += str + "  "
-//            }
-//            ThrowExecutionError.throwError(c.name + " not found method:" + msgMethods)
-//        }
     }
+
+    private static void processTargetMethod(CtClass c, intimateMethodList) {
+        def tempIntimateMethod = []
+
+        for (CtMethod method : c.getDeclaredMethods()) {
+            String methodInfo = GenerateUtils.generateMethodInfo(method)
+            if (intimateMethodList.contains(methodInfo)) {
+                method.setModifiers(AccessFlag.PUBLIC)
+                tempIntimateMethod.add(methodInfo)
+            }
+        }
+        intimateMethodList.removeAll(tempIntimateMethod)
+        if (intimateMethodList.size() != 0) {
+            ThrowExecutionError.throwError(c.name + " not found method:  " + GenerateUtils.generateNotFoundMethodError(intimateMethodList))
+        }
+    }
+
 
 }

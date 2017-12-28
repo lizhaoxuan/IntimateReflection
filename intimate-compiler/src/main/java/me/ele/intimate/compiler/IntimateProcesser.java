@@ -189,8 +189,8 @@ public class IntimateProcesser extends AbstractProcessor {
             SetField field = executableElement.getAnnotation(SetField.class);
             List<CName> parameterTypes = getParameterTypes(executableElement);
 
-            if (parameterTypes.size() == 0) {
-                Throw.error("@SetField must have a parameter.method:" + executableElement.getSimpleName().toString());
+            if (parameterTypes.size() != 1) {
+                Throw.error("@SetField must have a parameter. method:" + executableElement.getSimpleName().toString());
             }
 
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
