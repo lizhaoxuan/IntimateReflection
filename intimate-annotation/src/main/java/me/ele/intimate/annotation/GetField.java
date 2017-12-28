@@ -14,5 +14,4 @@ public @interface GetField {
 
     String value();
 
-    boolean needThrow() default false;
 }

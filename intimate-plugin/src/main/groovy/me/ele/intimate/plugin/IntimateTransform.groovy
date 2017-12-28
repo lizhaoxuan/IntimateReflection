@@ -84,7 +84,7 @@ class IntimateTransform extends Transform {
 
                     data.targetModelMap.each { key, value ->
                         DataSource.implMap.put(value.interfaceName.fullName, value.implPackageName + "." + value.implClassName)
-                        if (!value.isSystemClass) {
+                        if (!value.needReflection) {
                             DataSource.intimateConfig.put(value.targetName.fullName, value)
                             if (!DataSource.todoList.contains(value.implPackageName + "." + value.implClassName)) {
                                 DataSource.todoList.add(value.implPackageName + "." + value.implClassName)

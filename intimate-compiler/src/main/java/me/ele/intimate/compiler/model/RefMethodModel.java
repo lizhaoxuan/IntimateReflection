@@ -1,5 +1,6 @@
 package me.ele.intimate.compiler.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.type.TypeMirror;
@@ -11,25 +12,28 @@ import javax.lang.model.type.TypeMirror;
 public class RefMethodModel {
 
     private String name;
-    private boolean needThrow;
     private CName returnType;
+    private List<CName> thrownTypes;
     private List<CName> parameterTypes;
     private String methodContentCode;
 
-    public RefMethodModel(String name, boolean needThrow, TypeMirror returnType, List<CName> parameterTypes) {
+    public RefMethodModel(String name, TypeMirror returnType, List<CName> parameterTypes, List<? extends TypeMirror> thrownTypes) {
         this.name = name;
-        this.needThrow = needThrow;
         this.returnType = new CName(returnType);
         this.parameterTypes = parameterTypes;
         this.methodContentCode = generateMethodContentCode();
+        this.thrownTypes = new ArrayList<>();
+        for (TypeMirror throwType : thrownTypes) {
+            this.thrownTypes.add(new CName(throwType));
+        }
+    }
+
+    public List<CName> getThrownTypes() {
+        return thrownTypes;
     }
 
     public String getName() {
         return name;
-    }
-
-    public boolean isNeedThrow() {
-        return needThrow;
     }
 
     public CName getReturnType() {

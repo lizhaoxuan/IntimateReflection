@@ -16,19 +16,17 @@ public class RefTargetModel {
     private String implPackageName;
     private String implClassName;
     private boolean needForName;
-    private boolean isSystemClass;
-    private int needThrow;
+    private boolean needReflection;
     private List<RefFieldModel> fieldList;
     private List<RefMethodModel> methodList;
 
-    public RefTargetModel(String interfaceName, String className, boolean needForName, boolean isSystemClass, int needThrow) {
+    public RefTargetModel(String interfaceName, String className, boolean needForName, boolean needReflection) {
         this.interfaceName = new CName(interfaceName);
         this.targetName = new CName(className);
         this.needForName = needForName;
-        this.isSystemClass = isSystemClass;
-        this.needThrow = needThrow;
+        this.needReflection = needReflection;
         this.implClassName = this.interfaceName.className + "$$Intimate";
-        if (isSystemClass) {
+        if (needReflection) {
             this.implPackageName = this.targetName.packageName;
         } else {
             this.implPackageName = INTIMATE_PACKAGE;
@@ -61,12 +59,8 @@ public class RefTargetModel {
         return needForName;
     }
 
-    public boolean isSystemClass() {
-        return isSystemClass;
-    }
-
-    public int isNeedThrow() {
-        return needThrow;
+    public boolean isNeedReflection() {
+        return needReflection;
     }
 
     public List<RefFieldModel> getFieldList() {

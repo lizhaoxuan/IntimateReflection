@@ -91,7 +91,7 @@ public class IntimateProcesser extends AbstractProcessor {
         Map<String, String> implMap = new LinkedHashMap<>();
         for (RefTargetModel model : targetModelMap.values()) {
             implMap.put(model.getInterfaceName().fullName, model.getImplPackageName() + "." + model.getImplClassName());
-            if (model.isSystemClass()) {
+            if (model.isNeedReflection()) {
                 try {
                     new GenerateSystemCode(model).generate().writeTo(mFiler);
                 } catch (IOException e) {
@@ -124,8 +124,7 @@ public class IntimateProcesser extends AbstractProcessor {
             RefTargetModel model = new RefTargetModel(interfaceFullName,
                     refTarget.className(),
                     refTarget.needForName(),
-                    refTarget.needReflection(),
-                    refTarget.needThrow());
+                    refTarget.needReflection());
 
             targetModelMap.put(interfaceFullName, model);
         }
@@ -147,9 +146,9 @@ public class IntimateProcesser extends AbstractProcessor {
             }
 
             RefMethodModel methodModel = new RefMethodModel(name,
-                    method.needThrow(),
                     executableElement.getReturnType(),
-                    parameterTypes);
+                    parameterTypes,
+                    executableElement.getThrownTypes());
             targetModel.addMethod(methodModel);
         }
     }
@@ -170,10 +169,10 @@ public class IntimateProcesser extends AbstractProcessor {
 
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
                     executableElement.getSimpleName().toString(),
-                    field.needThrow(),
                     new CName(executableElement.getReturnType()),
                     false,
-                    executableElement.getReturnType());
+                    executableElement.getReturnType(),
+                    executableElement.getThrownTypes());
             targetModel.addField(fieldModel);
         }
 
@@ -194,10 +193,10 @@ public class IntimateProcesser extends AbstractProcessor {
 
             RefFieldModel fieldModel = new RefFieldModel(field.value(),
                     executableElement.getSimpleName().toString(),
-                    field.needThrow(),
                     parameterTypes.get(0),
                     true,
-                    executableElement.getReturnType());
+                    executableElement.getReturnType(),
+                    executableElement.getThrownTypes());
 
             fieldModel.setParameterTypes(parameterTypes.get(0));
             targetModel.addField(fieldModel);

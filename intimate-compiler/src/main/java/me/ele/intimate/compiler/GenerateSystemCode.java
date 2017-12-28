@@ -12,12 +12,12 @@ import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
+import me.ele.intimate.compiler.model.CName;
 import me.ele.intimate.compiler.model.RefFieldModel;
 import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
 import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
-import static me.ele.intimate.compiler.TypeUtil.INTIMATE_EXCEPTION;
 
 
 /**
@@ -66,8 +66,8 @@ public class GenerateSystemCode {
             MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(fieldModel.getMethodName())
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC);
-            if (fieldModel.isNeedThrow()) {
-                methodSpec.addException(INTIMATE_EXCEPTION);
+            for (CName exception : fieldModel.getThrownTypes()) {
+                methodSpec.addException(exception.typeName);
             }
             if (fieldModel.getParameterType() != null) {
                 methodSpec.addParameter(fieldModel.getParameterType().typeName, "arg");
@@ -81,13 +81,11 @@ public class GenerateSystemCode {
                         .addStatement("$N.set(mObject, arg)", fieldModel.getName())
                         .endControlFlow()
                         .beginControlFlow("catch (Exception e)");
-                if (fieldModel.isNeedThrow()) {
-                    methodSpec.addStatement("throw new $T(e)", INTIMATE_EXCEPTION);
-                } else {
-                    methodSpec.addStatement("e.printStackTrace()");
+                for (CName exception : fieldModel.getThrownTypes()) {
+                    methodSpec.addStatement("if(e instanceof $T) throw ($T)e", exception.typeName, exception.typeName);
                 }
+                methodSpec.addStatement("e.printStackTrace()");
                 methodSpec.endControlFlow();
-                methodSpec.addCode(TypeUtil.typeDefaultReturnCode(fieldModel.getReturnType()));
             } else {
                 methodSpec.returns(fieldModel.getType().typeName);
                 methodSpec.beginControlFlow("try")
@@ -97,13 +95,13 @@ public class GenerateSystemCode {
                         .addStatement("return($T)$N.get(mObject)", fieldModel.getType().typeName, fieldModel.getName())
                         .endControlFlow()
                         .beginControlFlow("catch (Exception e)");
-                if (fieldModel.isNeedThrow()) {
-                    methodSpec.addStatement("throw new $T(e)", INTIMATE_EXCEPTION);
-                } else {
-                    methodSpec.addStatement("e.printStackTrace()");
+                for (CName exception : fieldModel.getThrownTypes()) {
+                    methodSpec.addStatement("if(e instanceof $T) throw ($T)e", exception.typeName, exception.typeName);
                 }
-                methodSpec.endControlFlow("return null");
+                methodSpec.addStatement("e.printStackTrace()");
+                methodSpec.endControlFlow();
             }
+            methodSpec.addCode(TypeUtil.typeDefaultReturnCode(fieldModel.getReturnType()));
             implClass.addMethod(methodSpec.build());
         }
     }
@@ -136,8 +134,8 @@ public class GenerateSystemCode {
             getMethodCode.append(")");
             invokeCode.append(")");
 
-            if (methodModel.isNeedThrow()) {
-                methodSpec.addException(INTIMATE_EXCEPTION);
+            for (CName exception : methodModel.getThrownTypes()) {
+                methodSpec.addException(exception.typeName);
             }
             methodSpec.beginControlFlow("try")
                     .beginControlFlow("if($N == null)", methodModel.getName())
@@ -151,11 +149,10 @@ public class GenerateSystemCode {
             }
             methodSpec.endControlFlow()
                     .beginControlFlow("catch (Exception e)");
-            if (methodModel.isNeedThrow()) {
-                methodSpec.addStatement("throw new $T(e)", INTIMATE_EXCEPTION);
-            } else {
-                methodSpec.addStatement("e.printStackTrace()");
+            for (CName exception : methodModel.getThrownTypes()) {
+                methodSpec.addStatement("if(e instanceof $T) throw ($T)e", exception.typeName, exception.typeName);
             }
+            methodSpec.addStatement("e.printStackTrace()");
             methodSpec.endControlFlow();
             if (!methodModel.isVoid()) {
                 methodSpec.addCode(TypeUtil.typeDefaultReturnCode(methodModel.getReturnType()));

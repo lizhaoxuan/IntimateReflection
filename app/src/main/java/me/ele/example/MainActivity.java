@@ -14,6 +14,7 @@ import me.ele.intimate.RefImplFactory;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    int type = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
         int type = 1000;
 
-        try {
-            if (type == 1) {
-                throw new IllegalAccessException();
-            } else {
-                throw new ClassNotFoundException();
-            }
-        } catch (IllegalAccessException e) {
-            Log.d("TAG", "IllegalAccessException");
-        } catch (Exception e) {
-            Log.d("TAG", "Exception" + e.getClass().getCanonicalName());
-        }
-
         User user = new User("kaka", "男", 19, "三年二班");
 
         RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);
@@ -62,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         RefGson refGson = RefImplFactory.getRefImpl(new Gson(), RefGson.class);
         Log.d("TAG", "getDefaultLenient:" + refGson.getDefaultLenient());
         Log.d("TAG", "getDefaultPrettyPrint:" + refGson.getDefaultPrettyPrint());
-
-
     }
+
 }

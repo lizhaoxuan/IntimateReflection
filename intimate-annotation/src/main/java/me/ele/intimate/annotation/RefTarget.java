@@ -11,9 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface RefTarget {
-    int DEFAULT = 0;
-    int NEEDED_THROW = 1;
-    int UN_NEEDED_THROW = 2;
 
     String className();
 
@@ -21,5 +18,4 @@ public @interface RefTarget {
 
     boolean needReflection();
 
-    int needThrow() default DEFAULT;
 }

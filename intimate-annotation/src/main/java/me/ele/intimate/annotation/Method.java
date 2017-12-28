@@ -14,6 +14,4 @@ public @interface Method {
 
     String value() default "";
 
-    boolean needThrow() default false;
-
 }

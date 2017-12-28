@@ -1,5 +1,6 @@
 package me.ele.intimate.compiler.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.type.TypeMirror;
@@ -13,17 +14,16 @@ import me.ele.intimate.compiler.TypeUtil;
 public class RefFieldModel {
 
     private String name;
-    private boolean needThrow;
     private String methodName;
     private CName type;
     private CName returnType;
     private boolean isSet;
     private CName parameterType;
+    private List<CName> thrownTypes;
     private String methodContentCode;
 
-    public RefFieldModel(String name, String methodName, boolean needThrow, CName type, boolean isSet, TypeMirror returnType) {
+    public RefFieldModel(String name, String methodName, CName type, boolean isSet, TypeMirror returnType, List<? extends TypeMirror> thrownTypes) {
         this.name = name;
-        this.needThrow = needThrow;
         this.methodName = methodName;
         this.isSet = isSet;
         this.type = type;
@@ -33,6 +33,14 @@ public class RefFieldModel {
         } else {
             this.methodContentCode = "return mData." + name + ";";
         }
+        this.thrownTypes = new ArrayList<>();
+        for (TypeMirror throwType : thrownTypes) {
+            this.thrownTypes.add(new CName(throwType));
+        }
+    }
+
+    public List<CName> getThrownTypes() {
+        return thrownTypes;
     }
 
     public CName getReturnType() {
@@ -49,10 +57,6 @@ public class RefFieldModel {
 
     public String getName() {
         return name;
-    }
-
-    public boolean isNeedThrow() {
-        return needThrow;
     }
 
     public CName getType() {

@@ -14,5 +14,4 @@ public @interface SetField {
 
     String value();
 
-    boolean needThrow() default false;
 }
