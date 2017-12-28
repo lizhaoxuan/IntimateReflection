@@ -2,8 +2,8 @@ package me.ele.intimate.plugin
 
 import javassist.CtClass
 import javassist.CtMethod
-import me.ele.intimate.plugin.process.TargetDispark
 import me.ele.intimate.plugin.process.GenerateUtils
+import me.ele.intimate.plugin.process.TargetDispark
 
 /**
  * Created by lizhaoxuan on 2017/12/25.
@@ -14,7 +14,6 @@ class ClassInject {
     static void injectDir(String path, packageIndex) {
         IntimateTransform.pool.appendClassPath(path)
         File dir = new File(path)
-        def tempTodoList = []
         if (dir.isDirectory()) {
             dir.eachFileRecurse { File file ->
                 String filePath = file.absolutePath
@@ -25,14 +24,10 @@ class ClassInject {
                     int end = filePath.length() - 6 // .class = 6
                     String className = filePath.substring(packageIndex, end)
                             .replace('/', '.').replace('/', '.')
-
                     // 判断是否是需要处理的类
                     if (DataSource.todoList.contains(className)) {
                         processClass(className, path)
-                        tempTodoList.add(className)
                     }
-                    //从todoList中删除已经处理过的
-                    DataSource.todoList.removeAll(tempTodoList)
                 }
             }
         }
@@ -87,8 +82,9 @@ class ClassInject {
         }
 
         for (CtMethod method : c.getDeclaredMethods()) {
-            if (methodList.contains(method.name)) {
-                String code = contentMap.get(method.name)
+            String des = GenerateUtils.generateImplMethodDes(method)
+            if (methodList.contains(des)) {
+                String code = contentMap.get(des)
                 method.setBody(code)
             }
         }

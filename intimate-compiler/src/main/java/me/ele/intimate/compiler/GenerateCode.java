@@ -65,10 +65,10 @@ public class GenerateCode {
             }
             if (fieldModel.isSet()) {
                 methodSpec.returns(fieldModel.getReturnType().typeName);
-                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getReturnType()));
+                methodSpec.addCode(TypeUtil.typeDefaultReturnCode(fieldModel.getReturnType()));
             } else {
                 methodSpec.returns(fieldModel.getType().typeName);
-                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getType()));
+                methodSpec.addCode(TypeUtil.typeDefaultReturnCode(fieldModel.getType()));
             }
             implClass.addMethod(methodSpec.build());
         }
@@ -91,7 +91,7 @@ public class GenerateCode {
             }
 
             if (!methodModel.isVoid()) {
-                methodSpec.addCode(TypeUtil.typeDefaultValue(methodModel.getReturnType()));
+                methodSpec.addCode(TypeUtil.typeDefaultReturnCode(methodModel.getReturnType()));
             }
             implClass.addMethod(methodSpec.build());
         }

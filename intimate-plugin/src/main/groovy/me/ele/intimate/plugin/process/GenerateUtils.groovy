@@ -35,11 +35,20 @@ class GenerateUtils {
         return des.toString()
     }
 
-    static String generateFieldDes(def fieldConfig) {
+
+    static String generateImplMethodDes(CtMethod method) {
+        StringBuilder des = new StringBuilder(method.name)
+        for (CtClass param : method.getParameterTypes()) {
+            des.append("-").append(param.name)
+        }
+        return des.toString()
+    }
+
+    static String generateFieldDes(fieldConfig) {
         return "[" + fieldConfig.type.fullName + " : " + fieldConfig.name + "]"
     }
 
-    static String generateMethodDes(def methodConfig) {
+    static String generateMethodDes(methodConfig) {
         StringBuilder me = new StringBuilder(methodConfig.name).append("(")
         for (def parameterTypes : methodConfig.parameterTypes) {
             me.append(parameterTypes.fullName).append(",")

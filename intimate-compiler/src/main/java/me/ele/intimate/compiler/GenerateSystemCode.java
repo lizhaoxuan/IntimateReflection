@@ -87,7 +87,7 @@ public class GenerateSystemCode {
                     methodSpec.addStatement("e.printStackTrace()");
                 }
                 methodSpec.endControlFlow();
-                methodSpec.addCode(TypeUtil.typeDefaultValue(fieldModel.getReturnType()));
+                methodSpec.addCode(TypeUtil.typeDefaultReturnCode(fieldModel.getReturnType()));
             } else {
                 methodSpec.returns(fieldModel.getType().typeName);
                 methodSpec.beginControlFlow("try")
@@ -158,7 +158,7 @@ public class GenerateSystemCode {
             }
             methodSpec.endControlFlow();
             if (!methodModel.isVoid()) {
-                methodSpec.addCode(TypeUtil.typeDefaultValue(methodModel.getReturnType()));
+                methodSpec.addCode(TypeUtil.typeDefaultReturnCode(methodModel.getReturnType()));
             }
             implClass.addMethod(methodSpec.build());
         }

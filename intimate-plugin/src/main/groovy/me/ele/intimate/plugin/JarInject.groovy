@@ -29,8 +29,6 @@ class JarInject {
                     //println(path + "notFound factory")
                 }
             }
-            //从todoList中删除已经处理过的
-            DataSource.todoList.removeAll(tempTodoList)
         }
     }
 

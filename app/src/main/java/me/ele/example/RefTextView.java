@@ -10,7 +10,7 @@ import me.ele.intimate.annotation.SetField;
 /**
  * Created by lizhaoxuan on 2017/12/15.
  */
-@RefTarget(className = "android.widget.TextView", isSystemClass = true)
+@RefTarget(className = "android.widget.TextView", needReflection = true)
 public interface RefTextView {
 
     @GetField("mText")

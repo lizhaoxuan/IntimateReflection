@@ -8,7 +8,7 @@ import me.ele.intimate.annotation.RefTarget;
 /**
  * Created by lizhaoxuan on 2017/12/15.
  */
-@RefTarget(className = "android.view.View$ListenerInfo", isSystemClass = true)
+@RefTarget(className = "android.view.View$ListenerInfo", needReflection = true)
 public interface RefListenerInfo {
 
     @GetField("mOnClickListener")

@@ -1,5 +1,7 @@
 package me.ele.intimate.compiler.model;
 
+import java.util.List;
+
 import javax.lang.model.type.TypeMirror;
 
 import me.ele.intimate.compiler.TypeUtil;
@@ -27,7 +29,7 @@ public class RefFieldModel {
         this.type = type;
         this.returnType = new CName(returnType);
         if (isSet) {
-            this.methodContentCode = "{mData." + this.name + " = $1;" + TypeUtil.typeDefaultValue(this.returnType) + "}";
+            this.methodContentCode = "{mData." + this.name + " = $1;" + TypeUtil.typeDefaultReturnCode(this.returnType) + "}";
         } else {
             this.methodContentCode = "return mData." + name + ";";
         }

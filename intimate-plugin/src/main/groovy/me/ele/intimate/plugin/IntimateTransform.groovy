@@ -15,6 +15,7 @@ import org.gradle.api.Project
 
 class IntimateTransform extends Transform {
 
+    private static List<String> jarDirList = new ArrayList<>()
     static ClassPool pool = ClassPool.getDefault()
     Project project
 
@@ -39,36 +40,33 @@ class IntimateTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return true
+        return false
     }
 
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Collection<TransformInput> inputs = transformInvocation.getInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
+
         readIntimateConfig(inputs)
 
         inputs.each { TransformInput input ->
             input.jarInputs.each { JarInput jarInput ->
-                JarInject.insertClassPath(jarInput.file.absolutePath)
+                copyJar(jarInput, outputProvider)
             }
 
-            input.jarInputs.each { JarInput jarInput ->
-                processJar(jarInput, outputProvider)
+            jarDirList.each { String path ->
+                processJar(path)
             }
 
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 processClassFile(directoryInput, outputProvider)
             }
         }
-
-        if (DataSource.todoList.size() != 0) {
-            ThrowExecutionError.throwError(" not found Class:  " + me.ele.intimate.plugin.process.GenerateUtils.generateNotFoundClassError(DataSource.todoList))
-        }
-
     }
 
     private static void readIntimateConfig(Collection<TransformInput> inputs) {
+        DataSource.clear()
         inputs.each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 File configFile = new File(directoryInput.file.absolutePath + "/intimate/intimate.json")
@@ -113,19 +111,22 @@ class IntimateTransform extends Transform {
         FileUtils.copyDirectory(directoryInput.file, dest)
     }
 
-    private static void processJar(JarInput jarInput, TransformOutputProvider outputProvider) {
+    private static void copyJar(JarInput jarInput, TransformOutputProvider outputProvider) {
         def jarName = jarInput.name
         def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
         if (jarName.endsWith(".jar")) {
             jarName = jarName.substring(0, jarName.length() - 4)
         }
-        def dest = outputProvider.getContentLocation(jarName + md5Name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-
-        String jarPath = jarInput.file.absolutePath
-        if (jarPath.endsWith(".jar")) {
-            JarInject.injectJar(jarPath)
-        }
+        def dest = outputProvider.getContentLocation(jarName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
 
         FileUtils.copyFile(jarInput.file, dest)
+        JarInject.insertClassPath(dest.getAbsolutePath())
+        jarDirList.add(dest.getAbsolutePath())
+    }
+
+    private static void processJar(String path) {
+        if (path.endsWith(".jar")) {
+            JarInject.injectJar(path)
+        }
     }
 }

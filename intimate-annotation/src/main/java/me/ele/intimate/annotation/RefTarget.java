@@ -11,11 +11,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface RefTarget {
+    int DEFAULT = 0;
+    int NEEDED_THROW = 1;
+    int UN_NEEDED_THROW = 2;
+
     String className();
 
     boolean needForName() default false;
 
-    boolean isSystemClass();
+    boolean needReflection();
 
-    boolean needThrow() default false;
+    int needThrow() default DEFAULT;
 }

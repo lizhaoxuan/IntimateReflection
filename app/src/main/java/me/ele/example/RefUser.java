@@ -8,7 +8,7 @@ import me.ele.intimate.annotation.SetField;
 /**
  * Created by lizhaoxuan on 2017/12/18.
  */
-@RefTarget(className = "me.ele.example.lib.User", isSystemClass = false)
+@RefTarget(className = "me.ele.example.lib.User", needReflection = false)
 public interface RefUser {
 
     @Method
@@ -30,7 +30,7 @@ public interface RefUser {
     int getAge();
 
     @SetField("sex")
-    void setSex(String sex);
+    void setSexRef(String sex);
 
     @Method
     String getAgeStr();

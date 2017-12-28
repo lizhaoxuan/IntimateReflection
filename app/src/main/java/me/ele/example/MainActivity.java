@@ -22,8 +22,9 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.text);
 
         RefImplFactory.setFactoryShell(new RefFactoryImpl());
+        RefTextView refTextView = null;
         try {
-            RefTextView refTextView = RefImplFactory.getRefImplThrows(textView, RefTextView.class);
+            refTextView = RefImplFactory.getRefImplThrows(textView, RefTextView.class);
             refTextView.getText();
             Log.d("TAG", refTextView.getText().toString());
             Log.d("TAG", refTextView.getDesiredHeight() + " ");
@@ -31,20 +32,37 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        int type = 1000;
+
+        try {
+            if (type == 1) {
+                throw new IllegalAccessException();
+            } else {
+                throw new ClassNotFoundException();
+            }
+        } catch (IllegalAccessException e) {
+            Log.d("TAG", "IllegalAccessException");
+        } catch (Exception e) {
+            Log.d("TAG", "Exception" + e.getClass().getCanonicalName());
+        }
 
         User user = new User("kaka", "男", 19, "三年二班");
 
         RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);
         Log.d("TAG", "getName:" + refUser.getName());
         Log.d("TAG", "getSexStr: " + refUser.getSexStr());
-        refUser.setSex("你猜猜");
+        refUser.setSexRef("你猜猜ss");
         Log.d("TAG", "getSex：" + refUser.getSex());
         refUser.setAge(1, 2);
         Log.d("TAG", "getAge: " + refUser.getAge());
+        Log.d("TAG", "getAgeStr: " + refUser.getAgeStr());
         Log.d("TAG", "getClassName: " + refUser.getClassName());
 
 
         RefGson refGson = RefImplFactory.getRefImpl(new Gson(), RefGson.class);
         Log.d("TAG", "getDefaultLenient:" + refGson.getDefaultLenient());
+        Log.d("TAG", "getDefaultPrettyPrint:" + refGson.getDefaultPrettyPrint());
+
+
     }
 }

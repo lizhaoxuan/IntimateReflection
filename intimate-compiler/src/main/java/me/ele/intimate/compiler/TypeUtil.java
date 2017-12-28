@@ -18,7 +18,7 @@ public class TypeUtil {
     public static final ClassName I_REF_IMPL_FACTORY = ClassName.get(Constant.INTIMATE_PACKAGE, Constant.I_REF_IMPL_FACTORY);
     public static final ClassName LOG = ClassName.get("android.util", "Log");
 
-    public static String typeDefaultValue(CName cName) {
+    public static String typeDefaultReturnCode(CName cName) {
 
         if (cName.isPrimitive) {
             if (cName.typeName == TypeName.VOID) return "";

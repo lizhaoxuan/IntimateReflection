@@ -17,11 +17,11 @@ public class RefTargetModel {
     private String implClassName;
     private boolean needForName;
     private boolean isSystemClass;
-    private boolean needThrow;
-    List<RefFieldModel> fieldList;
-    List<RefMethodModel> methodList;
+    private int needThrow;
+    private List<RefFieldModel> fieldList;
+    private List<RefMethodModel> methodList;
 
-    public RefTargetModel(String interfaceName, String className, boolean needForName, boolean isSystemClass, boolean needThrow) {
+    public RefTargetModel(String interfaceName, String className, boolean needForName, boolean isSystemClass, int needThrow) {
         this.interfaceName = new CName(interfaceName);
         this.targetName = new CName(className);
         this.needForName = needForName;
@@ -65,7 +65,7 @@ public class RefTargetModel {
         return isSystemClass;
     }
 
-    public boolean isNeedThrow() {
+    public int isNeedThrow() {
         return needThrow;
     }
 

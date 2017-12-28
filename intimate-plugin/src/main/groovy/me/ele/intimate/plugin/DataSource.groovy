@@ -9,4 +9,11 @@ public class DataSource {
     public def static todoList = []
     public def static refFactoryShellName = ""
     public def static implMap = [:]
+
+    public static void clear() {
+        intimateConfig = [:]
+        todoList = []
+        refFactoryShellName = ""
+        implMap = [:]
+    }
 }

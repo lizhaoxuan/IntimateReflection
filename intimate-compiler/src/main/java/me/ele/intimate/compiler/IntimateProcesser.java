@@ -124,7 +124,7 @@ public class IntimateProcesser extends AbstractProcessor {
             RefTargetModel model = new RefTargetModel(interfaceFullName,
                     refTarget.className(),
                     refTarget.needForName(),
-                    refTarget.isSystemClass(),
+                    refTarget.needReflection(),
                     refTarget.needThrow());
 
             targetModelMap.put(interfaceFullName, model);
@@ -188,7 +188,6 @@ public class IntimateProcesser extends AbstractProcessor {
             ExecutableElement executableElement = (ExecutableElement) element;
             SetField field = executableElement.getAnnotation(SetField.class);
             List<CName> parameterTypes = getParameterTypes(executableElement);
-
             if (parameterTypes.size() != 1) {
                 Throw.error("@SetField must have a parameter. method:" + executableElement.getSimpleName().toString());
             }
