@@ -1,4 +1,4 @@
-package me.ele.intimate.plugin
+package me.ele.intimate.plugin.process
 
 import javassist.CtClass
 import javassist.CtField
@@ -76,10 +76,18 @@ class GenerateUtils {
         return msg.toString()
     }
 
-    public static String generateNotFoundMethodError(def intimateMethod) {
+    static String generateNotFoundMethodError(def intimateMethod) {
         StringBuilder msg = new StringBuilder()
         for (String str : intimateMethod) {
             msg.append(str).append(" \n")
+        }
+        return msg.toString()
+    }
+
+    static String generateNotFoundClassError(def todoList) {
+        StringBuilder msg = new StringBuilder()
+        for (String str : todoList) {
+            msg.append(str).append("  ")
         }
         return msg.toString()
     }

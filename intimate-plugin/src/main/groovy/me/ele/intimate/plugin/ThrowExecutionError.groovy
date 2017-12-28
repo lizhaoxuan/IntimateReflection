@@ -6,9 +6,9 @@ import com.google.common.util.concurrent.ExecutionError;
  * Created by lizhaoxuan on 2017/12/22.
  */
 
-public class ThrowExecutionError {
+class ThrowExecutionError {
 
-    public static void throwError(String msg) {
+    static void throwError(String msg) {
         throw new ExecutionError(msg, new Error(msg))
     }
 

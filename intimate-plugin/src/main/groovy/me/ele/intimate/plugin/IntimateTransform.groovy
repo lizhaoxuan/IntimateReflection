@@ -13,12 +13,12 @@ import org.gradle.api.Project
  * Created by lizhaoxuan on 2017/12/20.
  */
 
-public class IntimateTransform extends Transform {
+class IntimateTransform extends Transform {
 
-    public static ClassPool pool = ClassPool.getDefault()
+    static ClassPool pool = ClassPool.getDefault()
     Project project
 
-    public IntimateTransform(Project project) {
+    IntimateTransform(Project project) {
         this.project = project
     }
 
@@ -49,28 +49,22 @@ public class IntimateTransform extends Transform {
         readIntimateConfig(inputs)
 
         inputs.each { TransformInput input ->
-            //对类型为jar文件的input进行遍历
             input.jarInputs.each { JarInput jarInput ->
                 JarInject.insertClassPath(jarInput.file.absolutePath)
             }
 
-            //对类型为jar文件的input进行遍历
             input.jarInputs.each { JarInput jarInput ->
                 processJar(jarInput, outputProvider)
             }
 
-            //对类型为“文件夹”的input进行遍历
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 processClassFile(directoryInput, outputProvider)
             }
         }
 
-//        //效验是否所有需要配置的代码都已经配置完成
-//        if (intimateConfig.size() != 0) {
-//            intimateConfig.each { key, value ->
-//                ThrowExecutionError.throwError(key + " not found")
-//            }
-//        }
+        if (DataSource.todoList.size() != 0) {
+            ThrowExecutionError.throwError(" not found Class:  " + me.ele.intimate.plugin.process.GenerateUtils.generateNotFoundClassError(DataSource.todoList))
+        }
 
     }
 
@@ -84,10 +78,12 @@ public class IntimateTransform extends Transform {
                         content.append(it)
                     }
                     def data = new JsonSlurper().parseText(content.toString())
-                    if (data.refFactoryShellName != "") {
+
+                    if (data.refFactoryShellName != null && data.refFactoryShellName != "") {
                         DataSource.refFactoryShellName = data.refFactoryShellName
                         DataSource.todoList.add(data.refFactoryShellName)
                     }
+
                     data.targetModelMap.each { key, value ->
                         DataSource.implMap.put(value.interfaceName.fullName, value.implPackageName + "." + value.implClassName)
                         if (!value.isSystemClass) {
