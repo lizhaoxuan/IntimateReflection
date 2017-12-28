@@ -20,6 +20,9 @@ public interface RefUser {
     @SetField("name")
     void setName(String value);
 
+    @SetField("age")
+    void setName(int value);
+
     @GetField("sex")
     String getSex();
 

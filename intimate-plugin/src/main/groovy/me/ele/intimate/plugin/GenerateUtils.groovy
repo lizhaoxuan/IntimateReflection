@@ -19,11 +19,27 @@ class GenerateUtils {
         return builder.toString()
     }
 
-    static String generateFieldInfo(def fieldConfig) {
+    static String generateImplFieldDes(filedConfig) {
+        StringBuilder des = new StringBuilder(filedConfig.methodName)
+        if (filedConfig.parameterType != null) {
+            des.append("-").append(filedConfig.parameterType.fullName)
+        }
+        return des.toString()
+    }
+
+    static String generateImplMethodDes(methodConfig) {
+        StringBuilder des = new StringBuilder(methodConfig.name)
+        for (def param : methodConfig.parameterTypes) {
+            des.append("-").append(param.fullName)
+        }
+        return des.toString()
+    }
+
+    static String generateFieldDes(def fieldConfig) {
         return "[" + fieldConfig.type.fullName + " : " + fieldConfig.name + "]"
     }
 
-    static String generateMethodInfo(def methodConfig) {
+    static String generateMethodDes(def methodConfig) {
         StringBuilder me = new StringBuilder(methodConfig.name).append("(")
         for (def parameterTypes : methodConfig.parameterTypes) {
             me.append(parameterTypes.fullName).append(",")
@@ -35,11 +51,11 @@ class GenerateUtils {
         return me.toString()
     }
 
-    static String generateFieldInfo(CtField field) {
+    static String generateFieldDes(CtField field) {
         return "[" + field.getType().name + " : " + field.name + "]"
     }
 
-    static String generateMethodInfo(CtMethod method) {
+    static String generateMethodDes(CtMethod method) {
         StringBuilder me = new StringBuilder(method.name).append("(")
         for (CtClass parameterType : method.getParameterTypes()) {
             me.append(parameterType.name).append(",")

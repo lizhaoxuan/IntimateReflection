@@ -70,18 +70,19 @@ public class ClassInject {
     }
 
     private static void processImpl(CtClass c) {
-        //TODO 未考虑重载函数
         def contentMap = [:]
         def methodList = []
         DataSource.intimateConfig.each { key, value ->
             for (def filedConfig : value.fieldList) {
-                methodList.add(filedConfig.methodName)
-                contentMap.put(filedConfig.methodName, filedConfig.methodContentCode)
+                String des = GenerateUtils.generateImplFieldDes(filedConfig)
+                methodList.add(des)
+                contentMap.put(des, filedConfig.methodContentCode)
             }
 
             for (def methodConfig : value.methodList) {
-                methodList.add(methodConfig.name)
-                contentMap.put(methodConfig.name, methodConfig.methodContentCode)
+                String des = GenerateUtils.generateImplMethodDes(methodConfig)
+                methodList.add(des)
+                contentMap.put(des, methodConfig.methodContentCode)
             }
         }
 
@@ -100,10 +101,10 @@ public class ClassInject {
         DataSource.intimateConfig.each { key, value ->
             if (key == c.name) {
                 for (def filedConfig : value.fieldList) {
-                    intimateFieldList.add(GenerateUtils.generateFieldInfo(filedConfig))
+                    intimateFieldList.add(GenerateUtils.generateFieldDes(filedConfig))
                 }
                 for (def methodConfig : value.methodList) {
-                    intimateMethodList.add(GenerateUtils.generateMethodInfo(methodConfig))
+                    intimateMethodList.add(GenerateUtils.generateMethodDes(methodConfig))
                 }
             }
         }
@@ -116,7 +117,7 @@ public class ClassInject {
         def tempIntimateField = []
 
         for (CtField field : c.getDeclaredFields()) {
-            String fieldStr = GenerateUtils.generateFieldInfo(field)
+            String fieldStr = GenerateUtils.generateFieldDes(field)
             if (intimateFieldList.contains(fieldStr)) {
                 field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
                 tempIntimateField.add(fieldStr)
@@ -133,7 +134,7 @@ public class ClassInject {
         def tempIntimateMethod = []
 
         for (CtMethod method : c.getDeclaredMethods()) {
-            String methodInfo = GenerateUtils.generateMethodInfo(method)
+            String methodInfo = GenerateUtils.generateMethodDes(method)
             if (intimateMethodList.contains(methodInfo)) {
                 method.setModifiers(AccessFlag.PUBLIC)
                 tempIntimateMethod.add(methodInfo)
