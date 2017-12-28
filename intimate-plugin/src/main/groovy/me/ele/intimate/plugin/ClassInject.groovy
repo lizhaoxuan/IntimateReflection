@@ -27,9 +27,6 @@ public class ClassInject {
                     String className = filePath.substring(packageIndex, end)
                             .replace('/', '.').replace('/', '.')
                     // 判断是否是需要处理的类
-                    if (DataSource.refFactoryShellName == className) {
-                        processFactory(className, path)
-                    }
                     if (DataSource.todoList.contains(className)) {
                         processClass(className, path)
                         tempTodoList.add(className)
@@ -41,22 +38,6 @@ public class ClassInject {
         }
     }
 
-    private static void processFactory(String className, String path) {
-        CtClass c = IntimateTransform.pool.getCtClass(className)
-        if (c.isFrozen()) {
-            c.defrost()
-        }
-
-        if (DataSource.implMap.size() == 0) {
-            return
-        }
-        CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
-        String code = GenerateUtils.generateCreateRefImplCode(DataSource.implMap)
-        ctMethods.insertBefore(code)
-
-        c.writeFile(path)
-        c.detach()
-    }
 
     private static void processClass(String className, String path) {
         CtClass c = IntimateTransform.pool.getCtClass(className)
@@ -64,7 +45,10 @@ public class ClassInject {
             c.defrost()
         }
 
-        if (className.contains("\$\$Intimate")) {
+        if (DataSource.refFactoryShellName == className) {
+            println("processFactory:" + className)
+            processFactory(c)
+        } else if (className.contains("\$\$Intimate")) {
             println("processImpl:" + className)
             processImpl(c)
         } else {
@@ -74,6 +58,15 @@ public class ClassInject {
 
         c.writeFile(path)
         c.detach()
+    }
+
+    private static void processFactory(CtClass c) {
+        if (DataSource.implMap.size() == 0) {
+            return
+        }
+        CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
+        String code = GenerateUtils.generateCreateRefImplCode(DataSource.implMap)
+        ctMethods.insertBefore(code)
     }
 
     private static void processImpl(CtClass c) {

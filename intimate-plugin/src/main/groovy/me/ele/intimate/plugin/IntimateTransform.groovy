@@ -84,7 +84,10 @@ public class IntimateTransform extends Transform {
                         content.append(it)
                     }
                     def data = new JsonSlurper().parseText(content.toString())
-                    DataSource.refFactoryShellName = data.refFactoryShellName
+                    if (data.refFactoryShellName != "") {
+                        DataSource.refFactoryShellName = data.refFactoryShellName
+                        DataSource.todoList.add(data.refFactoryShellName)
+                    }
                     data.targetModelMap.each { key, value ->
                         DataSource.implMap.put(value.interfaceName.fullName, value.implPackageName + "." + value.implClassName)
                         if (!value.isSystemClass) {
