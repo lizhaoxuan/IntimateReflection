@@ -17,7 +17,6 @@ import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -26,9 +25,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
-import javax.lang.model.util.Elements;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
@@ -36,6 +35,7 @@ import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
 import me.ele.intimate.annotation.RefFactoryShell;
 import me.ele.intimate.annotation.RefTarget;
+import me.ele.intimate.annotation.RefTargetForName;
 import me.ele.intimate.annotation.SetField;
 import me.ele.intimate.compiler.model.CName;
 import me.ele.intimate.compiler.model.RefFieldModel;
@@ -49,8 +49,6 @@ import me.ele.intimate.compiler.model.RefTargetModel;
 public class IntimateProcesser extends AbstractProcessor {
 
     private Filer mFiler;
-    private Elements mElementUtils;
-    private Messager mMessager;
     private Map<String, RefTargetModel> targetModelMap = new LinkedHashMap<>();
     private Element element;
     private IntimateOutputClass outputClass = new IntimateOutputClass();
@@ -59,14 +57,13 @@ public class IntimateProcesser extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         mFiler = processingEnv.getFiler();
-        mElementUtils = processingEnv.getElementUtils();
-        mMessager = processingEnv.getMessager();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         targetModelMap.clear();
         processRefTarget(roundEnvironment);
+        processRefTargetForName(roundEnvironment);
         processMethod(roundEnvironment);
         processGetField(roundEnvironment);
         processSetField(roundEnvironment);
@@ -78,7 +75,7 @@ public class IntimateProcesser extends AbstractProcessor {
 
         try {
             FileObject fileObject = mFiler.getResource(StandardLocation.CLASS_OUTPUT, "",
-                    "intimate/intimate.json");
+                    "me/ele/intimate/intimate.json");
             File file = new File(fileObject.toUri());
             Files.createParentDirs(file);
             Writer writer = Files.newWriter(file, Charsets.UTF_8);
@@ -90,16 +87,16 @@ public class IntimateProcesser extends AbstractProcessor {
         }
         Map<String, String> implMap = new LinkedHashMap<>();
         for (RefTargetModel model : targetModelMap.values()) {
-            implMap.put(model.getInterfaceName().fullName, model.getImplPackageName() + "." + model.getImplClassName());
-            if (model.isNeedReflection()) {
+            implMap.put(model.getInterfaceName().fullName, model.getImplFullName());
+            if (model.isOptimizationRef()) {
                 try {
-                    new GenerateSystemCode(model).generate().writeTo(mFiler);
+                    new GenerateCode(model).generate().writeTo(mFiler);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    new GenerateCode(model).generate().writeTo(mFiler);
+                    new GenerateSystemCode(model).generate().writeTo(mFiler);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -121,10 +118,34 @@ public class IntimateProcesser extends AbstractProcessor {
             TypeElement classElement = (TypeElement) element;
             RefTarget refTarget = classElement.getAnnotation(RefTarget.class);
             String interfaceFullName = classElement.getQualifiedName().toString();
+            System.out.println("refTarget.clazz().getCanonicalName():");
+            String targetName;
+            try {
+                targetName = refTarget.clazz().getCanonicalName();
+            } catch (MirroredTypeException mte) {
+                targetName = mte.getTypeMirror().toString();
+            }
+            RefTargetModel model = new RefTargetModel(interfaceFullName,
+                    targetName,
+                    refTarget.needForName(),
+                    refTarget.optimizationRef());
+
+            targetModelMap.put(interfaceFullName, model);
+        }
+    }
+
+    private void processRefTargetForName(RoundEnvironment roundEnv) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(RefTargetForName.class)) {
+            if (this.element == null) {
+                this.element = element;
+            }
+            TypeElement classElement = (TypeElement) element;
+            RefTargetForName refTarget = classElement.getAnnotation(RefTargetForName.class);
+            String interfaceFullName = classElement.getQualifiedName().toString();
             RefTargetModel model = new RefTargetModel(interfaceFullName,
                     refTarget.className(),
                     refTarget.needForName(),
-                    refTarget.needReflection());
+                    refTarget.optimizationRef());
 
             targetModelMap.put(interfaceFullName, model);
         }

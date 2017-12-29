@@ -1,5 +1,6 @@
 package me.ele.example;
 
+import me.ele.example.lib.User;
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
 import me.ele.intimate.annotation.RefTarget;
@@ -8,7 +9,7 @@ import me.ele.intimate.annotation.SetField;
 /**
  * Created by lizhaoxuan on 2017/12/18.
  */
-@RefTarget(className = "me.ele.example.lib.User", needReflection = false)
+@RefTarget(clazz = User.class, optimizationRef = true)
 public interface RefUser {
 
     @Method

@@ -69,7 +69,7 @@ class IntimateTransform extends Transform {
         DataSource.clear()
         inputs.each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
-                File configFile = new File(directoryInput.file.absolutePath + "/intimate/intimate.json")
+                File configFile = new File(directoryInput.file.absolutePath + "/me/ele/intimate/intimate.json")
                 if (configFile.exists()) {
                     def content = new StringBuilder()
                     configFile.eachLine("UTF-8") {
@@ -83,11 +83,11 @@ class IntimateTransform extends Transform {
                     }
 
                     data.targetModelMap.each { key, value ->
-                        DataSource.implMap.put(value.interfaceName.fullName, value.implPackageName + "." + value.implClassName)
-                        if (!value.needReflection) {
+                        DataSource.implMap.put(value.interfaceName.fullName, value.implFullName)
+                        if (value.optimizationRef) {
                             DataSource.intimateConfig.put(value.targetName.fullName, value)
-                            if (!DataSource.todoList.contains(value.implPackageName + "." + value.implClassName)) {
-                                DataSource.todoList.add(value.implPackageName + "." + value.implClassName)
+                            if (!DataSource.todoList.contains(value.implFullName)) {
+                                DataSource.todoList.add(value.implFullName)
                             }
                             if (!DataSource.todoList.contains(value.targetName.fullName)) {
                                 DataSource.todoList.add(value.targetName.fullName)

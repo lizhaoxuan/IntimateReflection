@@ -1,6 +1,8 @@
 package me.ele.example;
 
 
+import android.widget.TextView;
+
 import me.ele.intimate.IntimateException;
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
@@ -10,7 +12,7 @@ import me.ele.intimate.annotation.SetField;
 /**
  * Created by lizhaoxuan on 2017/12/15.
  */
-@RefTarget(className = "android.widget.TextView", needReflection = true)
+@RefTarget(clazz = TextView.class, optimizationRef = false)
 public interface RefTextView {
 
     @GetField("mText")

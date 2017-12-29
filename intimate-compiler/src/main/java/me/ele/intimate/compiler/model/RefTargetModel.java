@@ -13,24 +13,20 @@ public class RefTargetModel {
 
     private CName interfaceName;
     private CName targetName;
-    private String implPackageName;
+    private String implFullName;
     private String implClassName;
     private boolean needForName;
-    private boolean needReflection;
+    private boolean optimizationRef;
     private List<RefFieldModel> fieldList;
     private List<RefMethodModel> methodList;
 
-    public RefTargetModel(String interfaceName, String className, boolean needForName, boolean needReflection) {
+    public RefTargetModel(String interfaceName, String className, boolean needForName, boolean optimizationRef) {
         this.interfaceName = new CName(interfaceName);
         this.targetName = new CName(className);
         this.needForName = needForName;
-        this.needReflection = needReflection;
+        this.optimizationRef = optimizationRef;
         this.implClassName = this.interfaceName.className + "$$Intimate";
-        if (needReflection) {
-            this.implPackageName = this.targetName.packageName;
-        } else {
-            this.implPackageName = INTIMATE_PACKAGE;
-        }
+        this.implFullName = INTIMATE_PACKAGE + "." + this.implClassName;
     }
 
     public void addField(RefFieldModel field) {
@@ -59,8 +55,8 @@ public class RefTargetModel {
         return needForName;
     }
 
-    public boolean isNeedReflection() {
-        return needReflection;
+    public boolean isOptimizationRef() {
+        return optimizationRef;
     }
 
     public List<RefFieldModel> getFieldList() {
@@ -75,7 +71,7 @@ public class RefTargetModel {
         return implClassName;
     }
 
-    public String getImplPackageName() {
-        return implPackageName;
+    public String getImplFullName() {
+        return implFullName;
     }
 }

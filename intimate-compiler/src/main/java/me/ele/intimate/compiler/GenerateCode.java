@@ -12,6 +12,7 @@ import me.ele.intimate.compiler.model.RefFieldModel;
 import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
+import static me.ele.intimate.Constant.INTIMATE_PACKAGE;
 import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
 
 
@@ -49,7 +50,7 @@ public class GenerateCode {
         generateFiled(implClass, model.getFieldList());
         generateMethod(implClass, model.getMethodList());
 
-        return JavaFile.builder(model.getImplPackageName(), implClass.build()).build();
+        return JavaFile.builder(INTIMATE_PACKAGE, implClass.build()).build();
     }
 
     private void generateFiled(TypeSpec.Builder implClass, List<RefFieldModel> fieldModelList) {

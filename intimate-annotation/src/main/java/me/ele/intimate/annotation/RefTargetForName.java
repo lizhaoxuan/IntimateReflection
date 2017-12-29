@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
-public @interface RefTarget {
+public @interface RefTargetForName {
 
-    Class clazz();
+    String className();
 
     boolean needForName() default false;
 
