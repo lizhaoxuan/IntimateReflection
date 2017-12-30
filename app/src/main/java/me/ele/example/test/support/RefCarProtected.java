@@ -6,6 +6,6 @@ import me.ele.intimate.annotation.RefTarget;
 /**
  * Created by lizhaoxuan on 2017/12/29.
  */
-//@RefTarget(clazz = CarProtected.class, optimizationRef = true)
+@RefTarget(clazz = CarProtected.class, optimizationRef = true)
 public interface RefCarProtected {
 }

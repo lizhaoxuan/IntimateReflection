@@ -19,51 +19,51 @@ public interface RefCarPrivate {
     @GetField("name")
     String getNameField();
 
-//    @SetField("name")
-//    void setNameField(String name);
-//
-//    @GetField("level")
-//    int getLevelField();
-//
-//    //set 方法返回值随意,反正不生效
-//    @SetField("level")
-//    String setLevelField(int level);
-//
-//    @GetField("brand")
-//    Brand getBrandField();
-//
-//    @SetField("brand")
-//    void setBrandField(Brand brand);
-//
-//    @GetField("wheels")
-//    List<Wheel> getWhellListField();
-//
-//    @SetField("wheels")
-//    void setWhellListField(List<Wheel> wheels);
-//
-//    @Method
-//    String getName();
-//
-//    @Method
-//    void setName(String name);
-//
-//    @Method
-//    int getLevel();
-//
-//    @Method
-//    void setLevel(int level);
-//
-//    @Method
-//    Brand getBrand();
-//
-//    @Method
-//    void setBrand(Brand brand);
-//
-//    @Method
-//    List<Wheel> getWheels();
-//
-//    @Method
-//    void setWheels(List<Wheel> wheels);
+    @SetField("name")
+    void setNameField(String name);
+
+    @GetField("level")
+    int getLevelField();
+
+    //set 方法返回值随意,反正不生效
+    @SetField("level")
+    String setLevelField(int level);
+
+    @GetField("brand")
+    Brand getBrandField();
+
+    @SetField("brand")
+    void setBrandField(Brand brand);
+
+    @GetField("wheels")
+    List<Wheel> getWhellListField();
+
+    @SetField("wheels")
+    void setWhellListField(List<Wheel> wheels);
+
+    @Method
+    String getName();
+
+    @Method
+    void setName(String name);
+
+    @Method
+    int getLevel();
+
+    @Method
+    void setLevel(int level);
+
+    @Method
+    Brand getBrand();
+
+    @Method
+    void setBrand(Brand brand);
+
+    @Method
+    List<Wheel> getWheels();
+
+    @Method
+    void setWheels(List<Wheel> wheels);
 
 
 }

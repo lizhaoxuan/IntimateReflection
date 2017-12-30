@@ -7,7 +7,7 @@ import me.ele.intimate.annotation.RefTarget;
 /**
  * Created by lizhaoxuan on 2017/12/29.
  */
-//@RefTarget(clazz = InnerClazz.class, optimizationRef = true)
+@RefTarget(clazz = InnerClazz.class, optimizationRef = true)
 public interface RefInnerClazz {
 
     @GetField("privateInnerClass")

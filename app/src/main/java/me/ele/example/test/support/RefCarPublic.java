@@ -6,7 +6,7 @@ import me.ele.intimate.annotation.RefTarget;
 /**
  * Created by lizhaoxuan on 2017/12/29.
  */
-//@RefTarget(clazz = CarPublic.class, optimizationRef = true)
+@RefTarget(clazz = CarPublic.class, optimizationRef = true)
 public interface RefCarPublic {
 
 

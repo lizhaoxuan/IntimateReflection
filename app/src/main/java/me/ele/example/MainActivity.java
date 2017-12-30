@@ -2,12 +2,15 @@ package me.ele.example;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 
 import me.ele.example.lib.User;
+import me.ele.example.mock.CarPrivate;
+import me.ele.example.test.support.RefCarPrivate;
 import me.ele.intimate.IntimateException;
 import me.ele.intimate.RefImplFactory;
 
@@ -51,6 +54,17 @@ public class MainActivity extends AppCompatActivity {
         RefGson refGson = RefImplFactory.getRefImpl(new Gson(), RefGson.class);
         Log.d("TAG", "getDefaultLenient:" + refGson.getDefaultLenient());
         Log.d("TAG", "getDefaultPrettyPrint:" + refGson.getDefaultPrettyPrint());
+        new CarPrivate();
+        RefCarPrivate carPrivate = RefImplFactory.getRefImpl(new CarPrivate(), RefCarPrivate.class);
+        Log.d("TAG", "carPrivate:" + carPrivate.getNameField());
+
+        RecyclerView recyclerView = new RecyclerView(this);
+        RefRecyclerView refRecyclerView = RefImplFactory.getRefImpl(recyclerView, RefRecyclerView.class);
+        Log.d("TAG", "recyclerView:" + refRecyclerView.getLastTouchY());
+        refRecyclerView.setLastTouchY(11);
+        Log.d("TAG", "recyclerView:" + refRecyclerView.getLastTouchY());
+
+
     }
 
 }
