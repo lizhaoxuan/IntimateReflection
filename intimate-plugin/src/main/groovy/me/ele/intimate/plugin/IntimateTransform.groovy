@@ -4,10 +4,9 @@ import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import groovy.json.JsonSlurper
 import javassist.ClassPool
-import org.apache.commons.codec.digest.DigestUtils
+import javassist.CtClass
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
-
 
 /**
  * Created by lizhaoxuan on 2017/12/20.
@@ -15,8 +14,9 @@ import org.gradle.api.Project
 
 class IntimateTransform extends Transform {
 
-    private static List<String> jarDirList = new ArrayList<>()
     static ClassPool pool = ClassPool.getDefault()
+    private static List<String> jarDirList = new ArrayList<>()
+    static List<CtClass> ctClassList = new ArrayList<>()
     Project project
 
     IntimateTransform(Project project) {
@@ -49,14 +49,17 @@ class IntimateTransform extends Transform {
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
 
         readIntimateConfig(inputs)
-
+        pool.appendClassPath(project.android.bootClasspath[0].toString())
         inputs.each { TransformInput input ->
             input.jarInputs.each { JarInput jarInput ->
-                copyJar(jarInput, outputProvider)
+                pool.appendClassPath(jarInput.file.absolutePath)
             }
+        }
 
-            jarDirList.each { String path ->
-                processJar(path)
+        inputs.each { TransformInput input ->
+
+            input.jarInputs.each { JarInput jarInput ->
+                processJar(jarInput, outputProvider)
             }
 
             input.directoryInputs.each { DirectoryInput directoryInput ->
@@ -94,6 +97,7 @@ class IntimateTransform extends Transform {
                             }
                         }
                     }
+                    println("DataSource.todoList:" + DataSource.todoList)
                 }
             }
         }
@@ -111,22 +115,20 @@ class IntimateTransform extends Transform {
         FileUtils.copyDirectory(directoryInput.file, dest)
     }
 
-    private static void copyJar(JarInput jarInput, TransformOutputProvider outputProvider) {
+    private static void processJar(JarInput jarInput, TransformOutputProvider outputProvider) {
+        String jarPath = jarInput.file.absolutePath
+        File jar = JarInject.injectJar(jarPath)
+
+        // 重命名输出文件（同目录copyFile会冲突）
         def jarName = jarInput.name
-        def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
         if (jarName.endsWith(".jar")) {
             jarName = jarName.substring(0, jarName.length() - 4)
         }
         def dest = outputProvider.getContentLocation(jarName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-
-        FileUtils.copyFile(jarInput.file, dest)
-        JarInject.insertClassPath(dest.getAbsolutePath())
-        jarDirList.add(dest.getAbsolutePath())
-    }
-
-    private static void processJar(String path) {
-        if (path.endsWith(".jar")) {
-            JarInject.injectJar(path)
+        if (jar == null) {
+            FileUtils.copyFile(jarInput.file, dest)
+        } else {
+            FileUtils.copyFile(jar, dest)
         }
     }
 }

@@ -64,6 +64,7 @@ public class IntimateProcesser extends AbstractProcessor {
         targetModelMap.clear();
         processRefTarget(roundEnvironment);
         processRefTargetForName(roundEnvironment);
+
         processMethod(roundEnvironment);
         processGetField(roundEnvironment);
         processSetField(roundEnvironment);
@@ -118,7 +119,6 @@ public class IntimateProcesser extends AbstractProcessor {
             TypeElement classElement = (TypeElement) element;
             RefTarget refTarget = classElement.getAnnotation(RefTarget.class);
             String interfaceFullName = classElement.getQualifiedName().toString();
-            System.out.println("refTarget.clazz().getCanonicalName():");
             String targetName;
             try {
                 targetName = refTarget.clazz().getCanonicalName();
@@ -146,7 +146,6 @@ public class IntimateProcesser extends AbstractProcessor {
                     refTarget.className(),
                     refTarget.needForName(),
                     refTarget.optimizationRef());
-
             targetModelMap.put(interfaceFullName, model);
         }
     }

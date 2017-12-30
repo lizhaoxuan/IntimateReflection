@@ -41,15 +41,19 @@ public class CName {
         this.typeName = TypeName.get(typeMirror);
     }
 
-    private void initPackageAndClassName(String fullName) {
-        this.fullName = fullName;
+    private void initPackageAndClassName(String name) {
+        if (name.contains("<")) {
+            fullName = name.substring(0, name.indexOf("<"));
+        } else {
+            fullName = name;
+        }
         int lastIndex = fullName.lastIndexOf(".");
         if (lastIndex != -1) {
-            this.packageName = fullName.substring(0, lastIndex);
-            this.className = fullName.substring(lastIndex + 1, fullName.length());
+            packageName = fullName.substring(0, lastIndex);
+            className = fullName.substring(lastIndex + 1, fullName.length());
         } else {
-            this.packageName = fullName;
-            this.className = fullName;
+            packageName = fullName;
+            className = fullName;
         }
     }
 

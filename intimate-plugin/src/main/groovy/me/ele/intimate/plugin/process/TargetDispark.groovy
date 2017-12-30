@@ -1,11 +1,11 @@
-package me.ele.intimate.plugin.process;
+package me.ele.intimate.plugin.process
 
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
+import javassist.CtClass
+import javassist.CtField
+import javassist.CtMethod
 import javassist.bytecode.AccessFlag
 import me.ele.intimate.plugin.DataSource
-import me.ele.intimate.plugin.ThrowExecutionError;
+import me.ele.intimate.plugin.ThrowExecutionError
 
 /**
  * Created by lizhaoxuan on 2017/12/28.
@@ -14,39 +14,51 @@ import me.ele.intimate.plugin.ThrowExecutionError;
 class TargetDispark {
 
     static void processClass(CtClass c) {
-
+        c.setModifiers(AccessFlag.setPublic(c.getModifiers()))
         def intimateFieldList = []
+        def intimateObjectFieldList = []
         def intimateMethodList = []
 
         DataSource.intimateConfig.each { key, value ->
             if (key == c.name) {
-                for (def filedConfig : value.fieldList) {
-                    intimateFieldList.add(GenerateUtils.generateFieldDes(filedConfig))
+                for (def fieldConfig : value.fieldList) {
+                    if (fieldConfig.type.fullName == "java.lang.Object") {
+                        intimateObjectFieldList.add(fieldConfig.name)
+                    } else {
+                        intimateFieldList.add(GenerateUtils.generateFieldDes(fieldConfig))
+                    }
                 }
                 for (def methodConfig : value.methodList) {
                     intimateMethodList.add(GenerateUtils.generateMethodDes(methodConfig))
                 }
             }
         }
-
-        processTargetField(c, intimateFieldList)
+        processTargetField(c, intimateFieldList, intimateObjectFieldList)
         processTargetMethod(c, intimateMethodList)
     }
 
-    private static void processTargetField(CtClass c, intimateFieldList) {
+    private static void processTargetField(CtClass c, intimateFieldList, intimateObjectFieldList) {
         def tempIntimateField = []
-
+        def tempIntimateObjectFieldList = []
         for (CtField field : c.getDeclaredFields()) {
+            println("filedName:" + field.name)
             String fieldStr = GenerateUtils.generateFieldDes(field)
             if (intimateFieldList.contains(fieldStr)) {
                 field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
                 tempIntimateField.add(fieldStr)
+            } else if (intimateObjectFieldList.contains(field.name)) {
+                field.setModifiers(AccessFlag.setPublic(field.getModifiers()))
+                tempIntimateObjectFieldList.add(field.name)
             }
         }
 
         intimateFieldList.removeAll(tempIntimateField)
+        intimateObjectFieldList.removeAll(tempIntimateObjectFieldList)
         if (intimateFieldList.size() != 0) {
             ThrowExecutionError.throwError(c.name + " not found field:" + GenerateUtils.generateNotFoundFieldError(intimateFieldList))
+        }
+        if (intimateObjectFieldList.size() != 0) {
+            ThrowExecutionError.throwError(c.name + " not found field:" + GenerateUtils.generateNotFoundFieldError(intimateObjectFieldList))
         }
     }
 

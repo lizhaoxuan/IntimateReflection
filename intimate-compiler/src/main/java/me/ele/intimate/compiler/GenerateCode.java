@@ -38,14 +38,21 @@ public class GenerateCode {
         } else {
             construction.addStatement("super(object,$N.class)", model.getTargetName().fullName);
         }
-        construction.addStatement("mData = ($T) mObject", model.getTargetName().typeName);
+        if (!model.isNeedForName()){
+            construction.addStatement("mData = ($T) mObject", model.getTargetName().typeName);
+        }
 
         TypeSpec.Builder implClass = TypeSpec.classBuilder(model.getImplClassName())
                 .addModifiers(Modifier.PUBLIC)
                 .superclass(BASE_REF_IMPL)
                 .addSuperinterface(model.getInterfaceName().typeName)
-                .addMethod(construction.build())
-                .addField(model.getTargetName().typeName, "mData");
+                .addMethod(construction.build());
+        if (model.isNeedForName()) {
+            implClass.addField(Object.class, "mData");
+        } else {
+            implClass.addField(model.getTargetName().typeName, "mData");
+        }
+
 
         generateFiled(implClass, model.getFieldList());
         generateMethod(implClass, model.getMethodList());

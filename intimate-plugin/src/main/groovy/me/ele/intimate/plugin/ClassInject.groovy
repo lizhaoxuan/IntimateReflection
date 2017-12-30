@@ -1,6 +1,8 @@
 package me.ele.intimate.plugin
 
 import javassist.CtClass
+import javassist.CtConstructor
+import javassist.CtField
 import javassist.CtMethod
 import me.ele.intimate.plugin.process.GenerateUtils
 import me.ele.intimate.plugin.process.TargetDispark
@@ -67,26 +69,41 @@ class ClassInject {
     private static void processImpl(CtClass c) {
         def contentMap = [:]
         def methodList = []
-        DataSource.intimateConfig.each { key, value ->
-            for (def filedConfig : value.fieldList) {
-                String des = GenerateUtils.generateImplFieldDes(filedConfig)
-                methodList.add(des)
-                contentMap.put(des, filedConfig.methodContentCode)
-            }
 
-            for (def methodConfig : value.methodList) {
-                String des = GenerateUtils.generateImplMethodDes(methodConfig)
-                methodList.add(des)
-                contentMap.put(des, methodConfig.methodContentCode)
+        DataSource.intimateConfig.each { key, value ->
+            if (value.implFullName == c.name) {
+                if (value.needForName) {
+                    processInnerClass(c, value)
+                }
+                for (def filedConfig : value.fieldList) {
+                    String des = GenerateUtils.generateImplFieldDes(filedConfig)
+                    methodList.add(des)
+                    contentMap.put(des, filedConfig.methodContentCode)
+                }
+
+                for (def methodConfig : value.methodList) {
+                    String des = GenerateUtils.generateImplMethodDes(methodConfig)
+                    methodList.add(des)
+                    contentMap.put(des, methodConfig.methodContentCode)
+                }
             }
         }
-
         for (CtMethod method : c.getDeclaredMethods()) {
             String des = GenerateUtils.generateImplMethodDes(method)
             if (methodList.contains(des)) {
                 String code = contentMap.get(des)
                 method.setBody(code)
             }
+        }
+    }
+
+    private static void processInnerClass(CtClass c, value) {
+        CtField field = c.getDeclaredField("mData")
+        CtClass targetClass = IntimateTransform.pool.getCtClass(value.targetName.fullName)
+        field.setType(targetClass)
+
+        for (CtConstructor constructors : c.getConstructors()) {
+            constructors.insertAfter("mData = (" + value.targetName.fullName + ") mObject;")
         }
     }
 
