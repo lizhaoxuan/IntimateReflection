@@ -34,7 +34,7 @@ public class GenerateCode {
                 .addException(ClassNotFoundException.class)
                 .addParameter(Object.class, "object");
         if (model.getTargetName().fullName.contains("$") || model.isNeedForName()) {
-            construction.addStatement("super(object,Class.forName($S))", model.getTargetName().fullName + ".class");
+            construction.addStatement("super(object,Class.forName($S))", model.getTargetName().fullName);
         } else {
             construction.addStatement("super(object,$N.class)", model.getTargetName().fullName);
         }

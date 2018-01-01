@@ -20,7 +20,7 @@ class TargetDispark {
         def intimateMethodList = []
 
         DataSource.intimateConfig.each { key, value ->
-            if (key == c.name) {
+            if (key == c.name || key == c.name.replace("\$", ".")) {
                 for (def fieldConfig : value.fieldList) {
                     if (fieldConfig.type.fullName == "java.lang.Object") {
                         intimateObjectFieldList.add(fieldConfig.name)
@@ -41,7 +41,6 @@ class TargetDispark {
         def tempIntimateField = []
         def tempIntimateObjectFieldList = []
         for (CtField field : c.getDeclaredFields()) {
-            println("filedName:" + field.name)
             String fieldStr = GenerateUtils.generateFieldDes(field)
             if (intimateFieldList.contains(fieldStr)) {
                 field.setModifiers(AccessFlag.setPublic(field.getModifiers()))

@@ -33,7 +33,7 @@ class JarInject {
                         && !className.contains("BuildConfig.class")) {
                     className = className.substring(0, className.length() - 6)
                     for (String todo : DataSource.todoList) {
-                        if (className == todo) {
+                        if (className == todo || className.replace("\$", ".") == todo) {
                             processClass(className, jarZipDir)
                         }
                     }
