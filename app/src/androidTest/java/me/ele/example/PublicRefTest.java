@@ -89,7 +89,7 @@ public class PublicRefTest {
         }
 
         //test String method
-        assertEquals(refCarProtected.getName(), "我的Public小电驴");
+        assertEquals(refCarProtected.getName(), "我的Protected小电驴");
         refCarProtected.setName("changeName");
         assertEquals(refCarProtected.getName(), "changeName");
 

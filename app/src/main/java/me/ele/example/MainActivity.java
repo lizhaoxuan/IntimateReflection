@@ -4,15 +4,30 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import me.ele.example.lib.User;
 import me.ele.example.mock.CarPrivate;
-import me.ele.example.test.support.RefCarPrivate;
+import me.ele.example.mock.InnerClazz;
+import me.ele.example.ref.RefCarPrivate;
+import me.ele.example.ref.RefFactoryImpl;
+import me.ele.example.ref.RefGson;
+import me.ele.example.ref.RefInnerClazz;
+import me.ele.example.ref.RefPrivateInnerClass;
+import me.ele.example.ref.RefPublicStaticInnerClass;
+import me.ele.example.ref.RefRecyclerView;
+import me.ele.example.ref.RefTextView;
+import me.ele.example.ref.RefUser;
 import me.ele.intimate.IntimateException;
 import me.ele.intimate.RefImplFactory;
+
+import static junit.framework.Assert.assertEquals;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +79,38 @@ public class MainActivity extends AppCompatActivity {
         refRecyclerView.setLastTouchY(11);
         Log.d("TAG", "recyclerView:" + refRecyclerView.getLastTouchY());
 
+        testPrivateInnerClass();
+        testStaticInnerClass();
+    }
 
+    private boolean testPrivateInnerClass() {
+        RefInnerClazz refInnerClazz = RefImplFactory.getRefImpl(new InnerClazz(), RefInnerClazz.class);
+        if (refInnerClazz == null) {
+            Log.d("TAG", "111:");
+            return false;
+        }
+        RefPrivateInnerClass refPrivateInnerClass = RefImplFactory.getRefImpl(refInnerClazz.getPrivateInnerClass(),
+                RefPrivateInnerClass.class);
+        if (refPrivateInnerClass == null) {
+            Log.d("TAG", "222:");
+            return false;
+        }
+        assertEquals(refPrivateInnerClass.getName(), "defaultInnerClass");
+        return true;
+    }
+
+    private boolean testStaticInnerClass() {
+        RefInnerClazz refInnerClazz = RefImplFactory.getRefImpl(new InnerClazz(), RefInnerClazz.class);
+        if (refInnerClazz == null) {
+            return false;
+        }
+        RefPublicStaticInnerClass refPublicStaticInnerClass = RefImplFactory.getRefImpl(refInnerClazz.getPublicStaticInnerClass(),
+                RefPublicStaticInnerClass.class);
+        if (refPublicStaticInnerClass == null) {
+            return false;
+        }
+        assertEquals(refPublicStaticInnerClass.getName(), "publicStaticInnerClass");
+        return true;
     }
 
 }

@@ -24,7 +24,7 @@ public class User {
     }
 
     String getAgeStr() {
-        return String.valueOf(age + 1);
+        return String.valueOf(age);
     }
 
     protected String getSexStr() {
@@ -35,20 +35,4 @@ public class User {
         return className;
     }
 
-    public Object getName$IntimateField() {
-        return name;
-    }
-
-    //生成的方法
-    public Object getAge$IntimateField() {
-        return age;
-    }
-
-    public Object getClassName$IntimateMethod() {
-        return getClassName();
-    }
-
-    public void println() {
-        System.out.println("ssss");
-    }
 }

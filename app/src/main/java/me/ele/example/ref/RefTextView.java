@@ -24,10 +24,7 @@ public interface RefTextView {
     @GetField("mListenerInfo")
     Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException, IntimateException;
 
-    @Method("getDesiredHeight")
+    @Method
     int getDesiredHeight();
-
-    @Method("isDirectionalNavigationKey")
-    int isDirectionalNavigationKey(int keyCode) throws IntimateException;
 
 }
