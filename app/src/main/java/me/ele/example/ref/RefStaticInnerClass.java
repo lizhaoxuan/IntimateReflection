@@ -1,4 +1,4 @@
-package me.ele.example.test.support;
+package me.ele.example.ref;
 
 import me.ele.intimate.annotation.Method;
 import me.ele.intimate.annotation.RefTargetForName;

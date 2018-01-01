@@ -1,4 +1,4 @@
-package me.ele.example;
+package me.ele.example.ref;
 
 import me.ele.example.lib.User;
 import me.ele.intimate.annotation.GetField;

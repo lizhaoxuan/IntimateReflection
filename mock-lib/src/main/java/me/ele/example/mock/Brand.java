@@ -29,4 +29,13 @@ public class Brand {
     public void setDes(String des) {
         this.des = des;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o != null && o instanceof Brand) {
+            Brand temp = (Brand) o;
+            return this.name.equals(temp.name) && this.des.equals(temp.des);
+        }
+        return false;
+    }
 }

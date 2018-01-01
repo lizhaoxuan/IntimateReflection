@@ -1,4 +1,4 @@
-package me.ele.example.test.support;
+package me.ele.example.ref;
 
 import me.ele.example.mock.InnerClazz;
 import me.ele.intimate.annotation.GetField;

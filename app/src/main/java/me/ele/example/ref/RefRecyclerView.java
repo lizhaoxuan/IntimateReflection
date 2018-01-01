@@ -1,4 +1,4 @@
-package me.ele.example;
+package me.ele.example.ref;
 
 import android.support.v7.widget.RecyclerView;
 

@@ -9,8 +9,8 @@ import java.util.List;
 
 public class CarPrivate {
 
-    private String name = "sss";
-    private int level = 1;
+    private String name;
+    private int level;
     private Brand brand;
     private List<Wheel> wheels;
 

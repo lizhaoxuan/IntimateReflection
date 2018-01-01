@@ -1,4 +1,4 @@
-package me.ele.example;
+package me.ele.example.ref;
 
 import me.ele.intimate.AbsRefFactoryShell;
 import me.ele.intimate.BaseRefImpl;

@@ -1,9 +1,9 @@
-package me.ele.example.test.support;
+package me.ele.example.ref;
 
 import java.util.List;
 
 import me.ele.example.mock.Brand;
-import me.ele.example.mock.CarPrivate;
+import me.ele.example.mock.CarProtected;
 import me.ele.example.mock.Wheel;
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
@@ -13,8 +13,8 @@ import me.ele.intimate.annotation.SetField;
 /**
  * Created by lizhaoxuan on 2017/12/29.
  */
-@RefTarget(clazz = CarPrivate.class, optimizationRef = true)
-public interface RefCarPrivate {
+@RefTarget(clazz = CarProtected.class, optimizationRef = true)
+public interface RefCarProtected {
 
     @GetField("name")
     String getNameField();
@@ -64,6 +64,5 @@ public interface RefCarPrivate {
 
     @Method
     void setWheels(List<Wheel> wheels);
-
 
 }
