@@ -9,7 +9,6 @@ import android.widget.TextView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import me.ele.example.ref.RefFactoryImpl;
 import me.ele.example.ref.RefListenerInfo;
 import me.ele.example.ref.RefTextView;
 import me.ele.intimate.IntimateException;
@@ -27,7 +26,6 @@ public class SystemClassTest {
     @Test
     public void testRefTextView() throws Exception {
         TextView textView = new TextView(InstrumentationRegistry.getTargetContext());
-        RefImplFactory.setFactoryShell(new RefFactoryImpl());
 
         RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class);
         assertNotNull(refTextView);

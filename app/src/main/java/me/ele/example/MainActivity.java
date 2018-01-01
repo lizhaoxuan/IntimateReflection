@@ -4,19 +4,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import me.ele.example.lib.User;
 import me.ele.example.mock.CarPrivate;
 import me.ele.example.mock.InnerClazz;
 import me.ele.example.ref.RefCarPrivate;
-import me.ele.example.ref.RefFactoryImpl;
 import me.ele.example.ref.RefGson;
 import me.ele.example.ref.RefInnerClazz;
 import me.ele.example.ref.RefPrivateInnerClass;
@@ -40,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.text);
 
-        RefImplFactory.setFactoryShell(new RefFactoryImpl());
         RefTextView refTextView = null;
         try {
             refTextView = RefImplFactory.getRefImplThrows(textView, RefTextView.class);

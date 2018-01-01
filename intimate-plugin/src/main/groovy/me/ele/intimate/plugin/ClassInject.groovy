@@ -42,10 +42,7 @@ class ClassInject {
             c.defrost()
         }
 
-        if (DataSource.refFactoryShellName == className) {
-            println("processFactory:" + className)
-            processFactory(c)
-        } else if (className.contains("\$\$Intimate")) {
+        if (className.contains("\$\$Intimate")) {
             println("processImpl:" + className)
             processImpl(c)
         } else {
@@ -55,15 +52,6 @@ class ClassInject {
 
         c.writeFile(path)
         c.detach()
-    }
-
-    private static void processFactory(CtClass c) {
-        if (DataSource.implMap.size() == 0) {
-            return
-        }
-        CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
-        String code = GenerateUtils.generateCreateRefImplCode(DataSource.implMap)
-        ctMethods.insertBefore(code)
     }
 
     private static void processImpl(CtClass c) {

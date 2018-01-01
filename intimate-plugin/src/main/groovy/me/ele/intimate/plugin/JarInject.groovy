@@ -1,6 +1,8 @@
 package me.ele.intimate.plugin
 
 import javassist.CtClass
+import javassist.CtMethod
+import me.ele.intimate.plugin.process.GenerateUtils
 import me.ele.intimate.plugin.process.TargetDispark
 import org.apache.commons.io.FileUtils
 
@@ -54,9 +56,25 @@ class JarInject {
         if (c.isFrozen()) {
             c.defrost()
         }
-        println("processTarget:" + c.name)
-        TargetDispark.processClass(c)
+
+        if (DataSource.refFactoryShellName == className) {
+            println("processFactory:" + className)
+            processFactory(c)
+        } else {
+            println("processTarget:" + c.name)
+            TargetDispark.processClass(c)
+        }
+
         c.writeFile(path)
 //        c.detach()
+    }
+
+    private static void processFactory(CtClass c) {
+        if (DataSource.implMap.size() == 0) {
+            return
+        }
+        CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
+        String code = GenerateUtils.generateCreateRefImplCode(DataSource.implMap)
+        ctMethods.insertBefore(code)
     }
 }

@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import me.ele.example.mock.InnerClazz;
-import me.ele.example.ref.RefFactoryImpl;
 import me.ele.example.ref.RefInnerClazz;
 import me.ele.example.ref.RefPrivateInnerClass;
 import me.ele.example.ref.RefPublicStaticInnerClass;
@@ -26,8 +25,6 @@ public class InnerClassTest {
     @Test
     public void testUnUseShell() throws Exception {
         //利用反射创建RefFactory类
-        RefImplFactory.setFactoryShell(null);
-
         assertEquals(true, testPrivateInnerClass());
         assertEquals(true, testStaticInnerClass());
         assertEquals(true, testStaticPublicInnerClass());
@@ -36,8 +33,6 @@ public class InnerClassTest {
 
     @Test
     public void testUseShell() throws Exception {
-        //编译期向FactoryShell注入代码，免去一次反射操作
-        RefImplFactory.setFactoryShell(new RefFactoryImpl());
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 

@@ -54,6 +54,10 @@ class IntimateTransform extends Transform {
             input.jarInputs.each { JarInput jarInput ->
                 pool.appendClassPath(jarInput.file.absolutePath)
             }
+
+            input.directoryInputs.each { DirectoryInput directoryInput ->
+                pool.appendClassPath(directoryInput.file.absolutePath)
+            }
         }
 
         inputs.each { TransformInput input ->

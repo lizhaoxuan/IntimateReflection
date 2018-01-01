@@ -33,7 +33,6 @@ import javax.tools.StandardLocation;
 
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
-import me.ele.intimate.annotation.RefFactoryShell;
 import me.ele.intimate.annotation.RefTarget;
 import me.ele.intimate.annotation.RefTargetForName;
 import me.ele.intimate.annotation.SetField;
@@ -68,7 +67,6 @@ public class IntimateProcesser extends AbstractProcessor {
         processMethod(roundEnvironment);
         processGetField(roundEnvironment);
         processSetField(roundEnvironment);
-        processRefFactoryShell(roundEnvironment);
 
         if (targetModelMap.size() == 0) {
             return true;
@@ -80,15 +78,14 @@ public class IntimateProcesser extends AbstractProcessor {
             File file = new File(fileObject.toUri());
             Files.createParentDirs(file);
             Writer writer = Files.newWriter(file, Charsets.UTF_8);
+            outputClass.refFactoryShellName = "me.ele.intimate.RefFactoryImpl";
             outputClass.targetModelMap = targetModelMap;
             new Gson().toJson(outputClass, writer);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Map<String, String> implMap = new LinkedHashMap<>();
         for (RefTargetModel model : targetModelMap.values()) {
-            implMap.put(model.getInterfaceName().fullName, model.getImplFullName());
             if (model.isOptimizationRef()) {
                 try {
                     new GenerateCode(model).generate().writeTo(mFiler);
@@ -102,11 +99,6 @@ public class IntimateProcesser extends AbstractProcessor {
                     e.printStackTrace();
                 }
             }
-        }
-        try {
-            new GenerateFactoryCode(implMap).generate().writeTo(mFiler);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return true;
     }
@@ -220,13 +212,6 @@ public class IntimateProcesser extends AbstractProcessor {
 
             fieldModel.setParameterTypes(parameterTypes.get(0));
             targetModel.addField(fieldModel);
-        }
-    }
-
-    private void processRefFactoryShell(RoundEnvironment roundEnv) {
-        for (Element element : roundEnv.getElementsAnnotatedWith(RefFactoryShell.class)) {
-            TypeElement classElement = (TypeElement) element;
-            outputClass.refFactoryShellName = classElement.getQualifiedName().toString();
         }
     }
 

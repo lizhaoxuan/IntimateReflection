@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import me.ele.example.lib.User;
-import me.ele.example.ref.RefFactoryImpl;
 import me.ele.example.ref.RefUser;
 import me.ele.intimate.RefImplFactory;
 
@@ -21,8 +20,6 @@ public class AppClassTest {
 
     @Test
     public void testAppClass() throws Exception {
-        RefImplFactory.setFactoryShell(new RefFactoryImpl());
-
         User user = new User("kaka", "男", 19, "三年二班");
 
         RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);

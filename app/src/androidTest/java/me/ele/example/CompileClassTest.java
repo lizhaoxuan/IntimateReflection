@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import me.ele.example.ref.RefFactoryImpl;
 import me.ele.example.ref.RefRecyclerView;
 import me.ele.intimate.RefImplFactory;
 
@@ -23,7 +22,6 @@ public class CompileClassTest {
     @Test
     public void testAppClass() throws Exception {
         RecyclerView recyclerView = new RecyclerView(InstrumentationRegistry.getTargetContext());
-        RefImplFactory.setFactoryShell(new RefFactoryImpl());
 
         RefRecyclerView refRecyclerView = RefImplFactory.getRefImpl(recyclerView, RefRecyclerView.class);
         assertNotNull(refRecyclerView);

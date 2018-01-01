@@ -13,7 +13,6 @@ import me.ele.example.mock.Brand;
 import me.ele.example.mock.CarPrivate;
 import me.ele.example.mock.Wheel;
 import me.ele.example.ref.RefCarPrivate;
-import me.ele.example.ref.RefFactoryImpl;
 import me.ele.intimate.RefImplFactory;
 
 import static org.junit.Assert.assertEquals;
@@ -27,9 +26,6 @@ public class PrivateRefTest {
 
     @Test
     public void testUnUseShell() throws Exception {
-        //利用反射创建RefFactory类
-        RefImplFactory.setFactoryShell(null);
-
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
@@ -39,8 +35,6 @@ public class PrivateRefTest {
 
     @Test
     public void testUseShell() throws Exception {
-        //编译期向FactoryShell注入代码，免去一次反射操作
-        RefImplFactory.setFactoryShell(new RefFactoryImpl());
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
