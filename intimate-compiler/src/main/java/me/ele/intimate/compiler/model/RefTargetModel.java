@@ -3,7 +3,8 @@ package me.ele.intimate.compiler.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.ele.intimate.Constant.INTIMATE_PACKAGE;
+import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
+
 
 /**
  * Created by lizhaoxuan on 2017/12/18.

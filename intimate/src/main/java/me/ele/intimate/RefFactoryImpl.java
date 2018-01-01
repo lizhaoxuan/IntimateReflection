@@ -5,7 +5,7 @@ package me.ele.intimate;
  */
 public class RefFactoryImpl {
 
-    public static BaseRefImpl createRefImpl(Object object, String name) throws ClassNotFoundException {
+    public static BaseRefImpl createRefImpl(Object object, String name) {
         return null;
     }
 }

@@ -3,7 +3,6 @@ package me.ele.example.ref;
 
 import android.widget.TextView;
 
-import me.ele.intimate.IntimateException;
 import me.ele.intimate.annotation.GetField;
 import me.ele.intimate.annotation.Method;
 import me.ele.intimate.annotation.RefTarget;
@@ -22,7 +21,7 @@ public interface RefTextView {
     String setText(CharSequence result);
 
     @GetField("mListenerInfo")
-    Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException, IntimateException;
+    Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
 
     @Method
     int getDesiredHeight();

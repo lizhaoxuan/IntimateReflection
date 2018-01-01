@@ -6,26 +6,12 @@ package me.ele.intimate;
 
 public class RefImplFactory {
 
-    public static <T> T getRefImplThrows(Object object, Class<T> clazz) throws IntimateException {
+    public static <T> T getRefImpl(Object object, Class<T> clazz) {
         String name = clazz.getCanonicalName();
         return (T) createRefImpl(object, name);
     }
 
-    public static <T> T getRefImpl(Object object, Class<T> clazz) {
-        try {
-            return getRefImplThrows(object, clazz);
-        } catch (IntimateException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static BaseRefImpl createRefImpl(Object object, String name) throws IntimateException {
-        try {
-            return RefFactoryImpl.createRefImpl(object, name);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+    private static BaseRefImpl createRefImpl(Object object, String name) {
+        return RefFactoryImpl.createRefImpl(object, name);
     }
 }

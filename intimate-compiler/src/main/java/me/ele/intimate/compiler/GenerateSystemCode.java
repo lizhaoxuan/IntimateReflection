@@ -17,7 +17,7 @@ import me.ele.intimate.compiler.model.RefFieldModel;
 import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
-import static me.ele.intimate.Constant.INTIMATE_PACKAGE;
+import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
 import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
 
 

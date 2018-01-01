@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 
 import me.ele.example.ref.RefListenerInfo;
 import me.ele.example.ref.RefTextView;
-import me.ele.intimate.IntimateException;
 import me.ele.intimate.RefImplFactory;
 
 import static junit.framework.Assert.assertEquals;
@@ -50,8 +49,6 @@ public class SystemClassTest {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IntimateException e) {
             e.printStackTrace();
         }
         assertNotNull(refListenerInfo);

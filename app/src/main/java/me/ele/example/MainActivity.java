@@ -19,7 +19,6 @@ import me.ele.example.ref.RefPublicStaticInnerClass;
 import me.ele.example.ref.RefRecyclerView;
 import me.ele.example.ref.RefTextView;
 import me.ele.example.ref.RefUser;
-import me.ele.intimate.IntimateException;
 import me.ele.intimate.RefImplFactory;
 
 import static junit.framework.Assert.assertEquals;
@@ -35,15 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.text);
 
-        RefTextView refTextView = null;
-        try {
-            refTextView = RefImplFactory.getRefImplThrows(textView, RefTextView.class);
-            refTextView.getText();
-            Log.d("TAG", refTextView.getText().toString());
-            Log.d("TAG", refTextView.getDesiredHeight() + " ");
-        } catch (IntimateException e) {
-            e.printStackTrace();
-        }
+        RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class);
+        refTextView.getText();
+        Log.d("TAG", refTextView.getText().toString());
+        Log.d("TAG", refTextView.getDesiredHeight() + " ");
 
         int type = 1000;
 

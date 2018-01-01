@@ -3,7 +3,6 @@ package me.ele.intimate.compiler;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
-import me.ele.intimate.Constant;
 import me.ele.intimate.compiler.model.CName;
 
 
@@ -12,10 +11,9 @@ import me.ele.intimate.compiler.model.CName;
  */
 
 public class TypeUtil {
+    public static final String INTIMATE_PACKAGE = "me.ele.intimate";
 
-    public static final ClassName BASE_REF_IMPL = ClassName.get(Constant.INTIMATE_PACKAGE, Constant.BASE_REF_IMPL);
-    public static final ClassName INTIMATE_EXCEPTION = ClassName.get(Constant.INTIMATE_PACKAGE, Constant.INTIMATE_EXCEPTION);
-    public static final ClassName I_REF_IMPL_FACTORY = ClassName.get(Constant.INTIMATE_PACKAGE, Constant.I_REF_IMPL_FACTORY);
+    public static final ClassName BASE_REF_IMPL = ClassName.get(INTIMATE_PACKAGE, "BaseRefImpl");
     public static final ClassName LOG = ClassName.get("android.util", "Log");
 
     public static String typeDefaultReturnCode(CName cName) {
