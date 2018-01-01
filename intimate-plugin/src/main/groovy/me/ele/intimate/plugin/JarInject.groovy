@@ -66,7 +66,7 @@ class JarInject {
         }
 
         c.writeFile(path)
-//        c.detach()
+        IntimateTransform.jarClassList.add(c)
     }
 
     private static void processFactory(CtClass c) {

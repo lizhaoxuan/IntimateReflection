@@ -15,8 +15,7 @@ import org.gradle.api.Project
 class IntimateTransform extends Transform {
 
     static ClassPool pool = ClassPool.getDefault()
-    private static List<String> jarDirList = new ArrayList<>()
-    static List<CtClass> ctClassList = new ArrayList<>()
+    static List<CtClass> jarClassList = new ArrayList<>()
     Project project
 
     IntimateTransform(Project project) {
@@ -61,13 +60,19 @@ class IntimateTransform extends Transform {
         }
 
         inputs.each { TransformInput input ->
-
+            jarClassList = new ArrayList<>()
             input.jarInputs.each { JarInput jarInput ->
                 processJar(jarInput, outputProvider)
             }
 
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 processClassFile(directoryInput, outputProvider)
+            }
+        }
+
+        for (CtClass ctClass : jarClassList) {
+            if (ctClass != null) {
+                ctClass.detach()
             }
         }
     }
