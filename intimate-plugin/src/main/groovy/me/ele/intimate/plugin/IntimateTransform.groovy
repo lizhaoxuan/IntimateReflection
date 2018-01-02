@@ -14,12 +14,14 @@ import org.gradle.api.Project
 
 class IntimateTransform extends Transform {
 
-    static ClassPool pool = ClassPool.getDefault()
+    static ClassPool pool
     static List<CtClass> jarClassList = new ArrayList<>()
     Project project
 
     IntimateTransform(Project project) {
         this.project = project
+        pool = new ClassPool()
+        pool.appendSystemPath()
     }
 
     @Override
@@ -46,6 +48,7 @@ class IntimateTransform extends Transform {
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Collection<TransformInput> inputs = transformInvocation.getInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
+
 
         readIntimateConfig(inputs)
         pool.appendClassPath(project.android.bootClasspath[0].toString())
@@ -75,6 +78,7 @@ class IntimateTransform extends Transform {
                 ctClass.detach()
             }
         }
+        jarClassList.clear()
     }
 
     private static void readIntimateConfig(Collection<TransformInput> inputs) {
