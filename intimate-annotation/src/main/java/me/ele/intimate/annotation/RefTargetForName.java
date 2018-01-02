@@ -14,8 +14,6 @@ public @interface RefTargetForName {
 
     String className();
 
-    boolean needForName() default false;
-
     boolean optimizationRef();
 
 }

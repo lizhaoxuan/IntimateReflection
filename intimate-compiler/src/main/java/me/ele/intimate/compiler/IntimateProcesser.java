@@ -119,7 +119,7 @@ public class IntimateProcesser extends AbstractProcessor {
             }
             RefTargetModel model = new RefTargetModel(interfaceFullName,
                     targetName,
-                    refTarget.needForName(),
+                    false,
                     refTarget.optimizationRef());
 
             targetModelMap.put(interfaceFullName, model);
@@ -136,7 +136,7 @@ public class IntimateProcesser extends AbstractProcessor {
             String interfaceFullName = classElement.getQualifiedName().toString();
             RefTargetModel model = new RefTargetModel(interfaceFullName,
                     refTarget.className(),
-                    refTarget.needForName(),
+                    true,
                     refTarget.optimizationRef());
             targetModelMap.put(interfaceFullName, model);
         }

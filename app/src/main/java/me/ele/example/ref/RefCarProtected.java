@@ -2,6 +2,7 @@ package me.ele.example.ref;
 
 import java.util.List;
 
+import me.ele.example.Constant;
 import me.ele.example.mock.Brand;
 import me.ele.example.mock.CarProtected;
 import me.ele.example.mock.Wheel;
@@ -13,7 +14,7 @@ import me.ele.intimate.annotation.SetField;
 /**
  * Created by lizhaoxuan on 2017/12/29.
  */
-@RefTarget(clazz = CarProtected.class, optimizationRef = true)
+@RefTarget(clazz = CarProtected.class, optimizationRef = Constant.OPTIMIZATION_REF)
 public interface RefCarProtected {
 
     @GetField("name")

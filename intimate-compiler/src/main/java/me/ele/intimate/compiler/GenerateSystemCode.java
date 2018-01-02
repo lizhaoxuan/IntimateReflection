@@ -39,11 +39,11 @@ public class GenerateSystemCode {
                 .addException(ClassNotFoundException.class)
                 .addParameter(Object.class, "object");
         if (model.getTargetName().fullName.contains("$") || model.isNeedForName()) {
-            construction.addStatement("super(object,Class.forName($S))", model.getTargetName().fullName + ".class");
+            construction.addStatement("super(object,Class.forName($S))", model.getTargetName().fullName);
         } else {
             construction.addStatement("super(object,$N.class)", model.getTargetName().fullName);
         }
-        
+
         TypeSpec.Builder implClass = TypeSpec.classBuilder(model.getImplClassName())
                 .addModifiers(Modifier.PUBLIC)
                 .superclass(BASE_REF_IMPL)

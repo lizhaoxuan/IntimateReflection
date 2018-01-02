@@ -14,8 +14,6 @@ public @interface RefTarget {
 
     Class clazz();
 
-    boolean needForName() default false;
-
     boolean optimizationRef();
 
 }
