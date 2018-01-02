@@ -18,8 +18,8 @@ public class RefTargetModel {
     private String implClassName;
     private boolean needForName;
     private boolean optimizationRef;
-    private List<RefFieldModel> fieldList;
-    private List<RefMethodModel> methodList;
+    private List<RefFieldModel> fieldList = new ArrayList<>();
+    private List<RefMethodModel> methodList = new ArrayList<>();
 
     public RefTargetModel(String interfaceName, String className, boolean needForName, boolean optimizationRef) {
         this.interfaceName = new CName(interfaceName);
@@ -31,16 +31,10 @@ public class RefTargetModel {
     }
 
     public void addField(RefFieldModel field) {
-        if (fieldList == null) {
-            fieldList = new ArrayList<>();
-        }
         fieldList.add(field);
     }
 
     public void addMethod(RefMethodModel method) {
-        if (methodList == null) {
-            methodList = new ArrayList<>();
-        }
         methodList.add(method);
     }
 
