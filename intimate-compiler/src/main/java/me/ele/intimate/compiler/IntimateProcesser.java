@@ -78,7 +78,7 @@ public class IntimateProcesser extends AbstractProcessor {
             File file = new File(fileObject.toUri());
             Files.createParentDirs(file);
             Writer writer = Files.newWriter(file, Charsets.UTF_8);
-            outputClass.refFactoryShellName = "me.ele.intimate.RefFactoryImpl";
+            outputClass.refFactoryShellName = "me.ele.intimate.RefImplFactory";
             outputClass.targetModelMap = targetModelMap;
             new Gson().toJson(outputClass, writer);
             writer.close();

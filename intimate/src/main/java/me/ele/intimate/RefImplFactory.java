@@ -6,12 +6,13 @@ package me.ele.intimate;
 
 public class RefImplFactory {
 
-    public static <T> T getRefImpl(Object object, Class<T> clazz) {
+    public static <T> T getRefImpl(Object object, Class clazz) {
         String name = clazz.getCanonicalName();
-        return (T) createRefImpl(object, name);
+        return createRefImpl(object, name);
     }
 
-    private static BaseRefImpl createRefImpl(Object object, String name) {
-        return RefFactoryImpl.createRefImpl(object, name);
+    private static <T> T createRefImpl(Object object, String name) {
+        //Compile time generate code
+        return null;
     }
 }
