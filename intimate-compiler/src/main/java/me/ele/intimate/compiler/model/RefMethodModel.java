@@ -45,7 +45,7 @@ public class RefMethodModel {
     }
 
     public boolean isVoid() {
-        return returnType.className.equals("");
+        return returnType.className.equals("void");
     }
 
     private String generateMethodContentCode() {

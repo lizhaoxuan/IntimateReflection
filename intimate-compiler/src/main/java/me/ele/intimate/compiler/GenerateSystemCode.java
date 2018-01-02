@@ -17,8 +17,8 @@ import me.ele.intimate.compiler.model.RefFieldModel;
 import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
-import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
 import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
+import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
 
 
 /**
@@ -43,12 +43,14 @@ public class GenerateSystemCode {
         } else {
             construction.addStatement("super(object,$N.class)", model.getTargetName().fullName);
         }
-
+        
         TypeSpec.Builder implClass = TypeSpec.classBuilder(model.getImplClassName())
                 .addModifiers(Modifier.PUBLIC)
                 .superclass(BASE_REF_IMPL)
                 .addSuperinterface(model.getInterfaceName().typeName)
                 .addMethod(construction.build());
+
+        implClass.addField(Object.class, "mData");
 
         generateFiled(implClass, model.getFieldList());
         generateMethod(implClass, model.getMethodList());
@@ -114,7 +116,7 @@ public class GenerateSystemCode {
         Set<String> fieldList = new HashSet<>();
         for (RefMethodModel methodModel : methodModels) {
             if (!fieldList.contains(methodModel.getName())) {
-                implClass.addField(Method.class, methodModel.getName());
+                implClass.addField(Method.class, methodModel.getName(), Modifier.STATIC);
                 fieldList.add(methodModel.getName());
             }
 
