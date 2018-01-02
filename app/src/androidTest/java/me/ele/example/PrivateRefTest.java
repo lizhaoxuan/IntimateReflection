@@ -1,7 +1,5 @@
 package me.ele.example;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
@@ -16,6 +14,7 @@ import me.ele.example.ref.RefCarPrivate;
 import me.ele.intimate.RefImplFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test "reflection" Private field and method.
@@ -25,31 +24,14 @@ import static org.junit.Assert.assertEquals;
 public class PrivateRefTest {
 
     @Test
-    public void testUnUseShell() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals(true, testPrivateRefField());
-        assertEquals(true, testPrivateRefMethod());
-    }
-
-    @Test
-    public void testUseShell() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals(true, testPrivateRefField());
-        assertEquals(true, testPrivateRefMethod());
-    }
-
-    private boolean testPrivateRefField() {
+    public void testPrivateRefField() throws Exception {
         CarPrivate car = new CarPrivate();
         RefCarPrivate refCarPrivate = RefImplFactory.getRefImpl(car, RefCarPrivate.class);
-        if (refCarPrivate == null) {
-            return false;
-        }
+
+        assertNotNull(refCarPrivate);
+
         //test String field
-        assertEquals(refCarPrivate.getNameField(), "我的Private小电驴");
+        assertEquals(refCarPrivate.getNameField(), "my Private car");
         refCarPrivate.setNameField("changeName");
         assertEquals(refCarPrivate.getNameField(), "changeName");
 
@@ -59,9 +41,9 @@ public class PrivateRefTest {
         assertEquals(refCarPrivate.getLevelField(), 12);
 
         //test Object field
-        assertEquals(refCarPrivate.getBrandField(), new Brand("宝驴", "源自德国的百年品牌"));
-        refCarPrivate.setBrandField(new Brand("宝骡", "源自德国的千年品牌"));
-        assertEquals(refCarPrivate.getBrandField(), new Brand("宝骡", "源自德国的千年品牌"));
+        assertEquals(refCarPrivate.getBrandField(), new Brand("biubiuCar", "made in china for 1986"));
+        refCarPrivate.setBrandField(new Brand("papaCar", "made in china for 1999"));
+        assertEquals(refCarPrivate.getBrandField(), new Brand("papaCar", "made in china for 1999"));
 
         //test set field
         assertEquals(refCarPrivate.getWhellListField().size(), 4);
@@ -70,18 +52,17 @@ public class PrivateRefTest {
         refCarPrivate.setWhellListField(wheels_field);
         assertEquals(refCarPrivate.getWhellListField().size(), 5);
 
-        return true;
     }
 
-    private boolean testPrivateRefMethod() {
+    @Test
+    public void testPrivateRefMethod() throws Exception {
         CarPrivate car = new CarPrivate();
         RefCarPrivate refCarPrivate = RefImplFactory.getRefImpl(car, RefCarPrivate.class);
-        if (refCarPrivate == null) {
-            return false;
-        }
+
+        assertNotNull(refCarPrivate);
 
         //test String method
-        assertEquals(refCarPrivate.getName(), "我的Private小电驴");
+        assertEquals(refCarPrivate.getName(), "my Private car");
         refCarPrivate.setName("changeName");
         assertEquals(refCarPrivate.getName(), "changeName");
 
@@ -91,9 +72,9 @@ public class PrivateRefTest {
         assertEquals(refCarPrivate.getLevel(), 12);
 
         //test Object method
-        assertEquals(refCarPrivate.getBrand(), new Brand("宝驴", "源自德国的百年品牌"));
-        refCarPrivate.setBrand(new Brand("宝骡", "源自德国的千年品牌"));
-        assertEquals(refCarPrivate.getBrand(), new Brand("宝骡", "源自德国的千年品牌"));
+        assertEquals(refCarPrivate.getBrand(), new Brand("biubiuCar", "made in china for 1986"));
+        refCarPrivate.setBrand(new Brand("papaCar", "made in china for 1999"));
+        assertEquals(refCarPrivate.getBrand(), new Brand("papaCar", "made in china for 1999"));
 
         //test set method
         assertEquals(refCarPrivate.getWheels().size(), 4);
@@ -102,7 +83,6 @@ public class PrivateRefTest {
         refCarPrivate.setWheels(wheels_method);
         assertEquals(refCarPrivate.getWheels().size(), 5);
 
-        return true;
     }
 
 }

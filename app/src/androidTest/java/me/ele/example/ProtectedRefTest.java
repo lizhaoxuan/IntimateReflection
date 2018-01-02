@@ -1,7 +1,5 @@
 package me.ele.example;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
@@ -16,6 +14,7 @@ import me.ele.example.ref.RefCarProtected;
 import me.ele.intimate.RefImplFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test "reflection" Private field and method.
@@ -25,31 +24,13 @@ import static org.junit.Assert.assertEquals;
 public class ProtectedRefTest {
 
     @Test
-    public void testUnUseShell() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals(true, testProtectedRefField());
-        assertEquals(true, testProtectedRefMethod());
-    }
-
-    @Test
-    public void testUseShell() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals(true, testProtectedRefField());
-        assertEquals(true, testProtectedRefMethod());
-    }
-
-    private boolean testProtectedRefField() {
+    public void testProtectedRefField() throws Exception {
         CarProtected car = new CarProtected();
         RefCarProtected refCarProtected = RefImplFactory.getRefImpl(car, RefCarProtected.class);
-        if (refCarProtected == null) {
-            return false;
-        }
+        assertNotNull(refCarProtected);
+
         //test String field
-        assertEquals(refCarProtected.getNameField(), "我的Protected小电驴");
+        assertEquals(refCarProtected.getNameField(), "my Protected car");
         refCarProtected.setNameField("changeName");
         assertEquals(refCarProtected.getNameField(), "changeName");
 
@@ -59,9 +40,9 @@ public class ProtectedRefTest {
         assertEquals(refCarProtected.getLevelField(), 12);
 
         //test Object field
-        assertEquals(refCarProtected.getBrandField(), new Brand("宝驴", "源自德国的百年品牌"));
-        refCarProtected.setBrandField(new Brand("宝骡", "源自德国的千年品牌"));
-        assertEquals(refCarProtected.getBrandField(), new Brand("宝骡", "源自德国的千年品牌"));
+        assertEquals(refCarProtected.getBrandField(), new Brand("biubiuCar", "made in china for 1986"));
+        refCarProtected.setBrandField(new Brand("papaCar", "made in china for 1999"));
+        assertEquals(refCarProtected.getBrandField(), new Brand("papaCar", "made in china for 1999"));
 
         //test set field
         assertEquals(refCarProtected.getWhellListField().size(), 4);
@@ -69,19 +50,16 @@ public class ProtectedRefTest {
         wheels_field.add(new Wheel("new Wheels", 4));
         refCarProtected.setWhellListField(wheels_field);
         assertEquals(refCarProtected.getWhellListField().size(), 5);
-
-        return true;
     }
 
-    private boolean testProtectedRefMethod() {
+    @Test
+    public void testProtectedRefMethod() throws Exception {
         CarProtected car = new CarProtected();
         RefCarProtected refCarProtected = RefImplFactory.getRefImpl(car, RefCarProtected.class);
-        if (refCarProtected == null) {
-            return false;
-        }
+        assertNotNull(refCarProtected);
 
         //test String method
-        assertEquals(refCarProtected.getName(), "我的Protected小电驴");
+        assertEquals(refCarProtected.getName(), "my Protected car");
         refCarProtected.setName("changeName");
         assertEquals(refCarProtected.getName(), "changeName");
 
@@ -91,9 +69,9 @@ public class ProtectedRefTest {
         assertEquals(refCarProtected.getLevel(), 12);
 
         //test Object method
-        assertEquals(refCarProtected.getBrand(), new Brand("宝驴", "源自德国的百年品牌"));
-        refCarProtected.setBrand(new Brand("宝骡", "源自德国的千年品牌"));
-        assertEquals(refCarProtected.getBrand(), new Brand("宝骡", "源自德国的千年品牌"));
+        assertEquals(refCarProtected.getBrand(), new Brand("biubiuCar", "made in china for 1986"));
+        refCarProtected.setBrand(new Brand("papaCar", "made in china for 1999"));
+        assertEquals(refCarProtected.getBrand(), new Brand("papaCar", "made in china for 1999"));
 
         //test set method
         assertEquals(refCarProtected.getWheels().size(), 4);
@@ -101,8 +79,6 @@ public class ProtectedRefTest {
         wheels_method.add(new Wheel("new Wheels", 4));
         refCarProtected.setWheels(wheels_method);
         assertEquals(refCarProtected.getWheels().size(), 5);
-
-        return true;
     }
 
 }

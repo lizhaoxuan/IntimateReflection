@@ -15,12 +15,12 @@ public class CarPublic {
     public List<Wheel> wheels;
 
     public CarPublic() {
-        name = "我的Public小电驴";
+        name = "my Public car";
         level = 7;
-        brand = new Brand("宝驴", "源自德国的百年品牌");
+        brand = new Brand("biubiuCar", "made in china for 1986");
         wheels = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            wheels.add(new Wheel("米其林", 10));
+            wheels.add(new Wheel("GuLu", 10));
         }
     }
 
@@ -55,5 +55,5 @@ public class CarPublic {
     public void setWheels(List<Wheel> wheels) {
         this.wheels = wheels;
     }
-    
+
 }
