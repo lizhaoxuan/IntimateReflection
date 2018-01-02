@@ -13,7 +13,6 @@ import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
 import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
-import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
 
 
 /**
@@ -34,19 +33,24 @@ public class GenerateCode {
                 .addException(ClassNotFoundException.class)
                 .addParameter(Object.class, "object");
         if (model.getTargetName().fullName.contains("$") || model.isNeedForName()) {
-            construction.addStatement("super(object,Class.forName($S))", model.getTargetName().fullName);
+            construction.addStatement("this.mObject = object")
+                    .addStatement("this.mClass = Class.forName($S)", model.getTargetName().fullName);
         } else {
-            construction.addStatement("super(object,$N.class)", model.getTargetName().fullName);
+            construction.addStatement("this.mObject = object")
+                    .addStatement("this.mClass = $N.class", model.getTargetName().fullName);
         }
-        if (!model.isNeedForName()){
+
+        if (!model.isNeedForName()) {
             construction.addStatement("mData = ($T) mObject", model.getTargetName().typeName);
         }
 
         TypeSpec.Builder implClass = TypeSpec.classBuilder(model.getImplClassName())
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(BASE_REF_IMPL)
                 .addSuperinterface(model.getInterfaceName().typeName)
-                .addMethod(construction.build());
+                .addMethod(construction.build())
+                .addField(Object.class, "mObject")
+                .addField(Class.class, "mClass");
+
         if (model.isNeedForName()) {
             implClass.addField(Object.class, "mData");
         } else {

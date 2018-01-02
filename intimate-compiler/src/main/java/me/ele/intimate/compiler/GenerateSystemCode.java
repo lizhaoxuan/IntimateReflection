@@ -17,7 +17,6 @@ import me.ele.intimate.compiler.model.RefFieldModel;
 import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
-import static me.ele.intimate.compiler.TypeUtil.BASE_REF_IMPL;
 import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
 
 
@@ -39,18 +38,19 @@ public class GenerateSystemCode {
                 .addException(ClassNotFoundException.class)
                 .addParameter(Object.class, "object");
         if (model.getTargetName().fullName.contains("$") || model.isNeedForName()) {
-            construction.addStatement("super(object,Class.forName($S))", model.getTargetName().fullName);
+            construction.addStatement("this.mObject = object")
+                    .addStatement("this.mClass = Class.forName($S)", model.getTargetName().fullName);
         } else {
-            construction.addStatement("super(object,$N.class)", model.getTargetName().fullName);
+            construction.addStatement("this.mObject = object")
+                    .addStatement("this.mClass = $N.class", model.getTargetName().fullName);
         }
 
         TypeSpec.Builder implClass = TypeSpec.classBuilder(model.getImplClassName())
                 .addModifiers(Modifier.PUBLIC)
-                .superclass(BASE_REF_IMPL)
                 .addSuperinterface(model.getInterfaceName().typeName)
-                .addMethod(construction.build());
-
-        implClass.addField(Object.class, "mData");
+                .addMethod(construction.build())
+                .addField(Object.class, "mObject")
+                .addField(Class.class, "mClass");
 
         generateFiled(implClass, model.getFieldList());
         generateMethod(implClass, model.getMethodList());
@@ -79,7 +79,8 @@ public class GenerateSystemCode {
                 methodSpec.returns(fieldModel.getReturnType().typeName);
                 methodSpec.beginControlFlow("try")
                         .beginControlFlow("if($N == null)", fieldModel.getName())
-                        .addStatement("$N = getField($S)", fieldModel.getName(), fieldModel.getName())
+                        .addStatement("$N = mClass.getDeclaredField($S)", fieldModel.getName(), fieldModel.getName())
+                        .addStatement("$N.setAccessible(true)", fieldModel.getName())
                         .endControlFlow()
                         .addStatement("$N.set(mObject, arg)", fieldModel.getName())
                         .endControlFlow()
@@ -93,8 +94,8 @@ public class GenerateSystemCode {
                 methodSpec.returns(fieldModel.getType().typeName);
                 methodSpec.beginControlFlow("try")
                         .beginControlFlow("if($N == null)", fieldModel.getName())
-                        .addStatement("$N = getField($S)", fieldModel.getName(), fieldModel.getName())
-                        .endControlFlow()
+                        .addStatement("$N = mClass.getDeclaredField($S)", fieldModel.getName(), fieldModel.getName())
+                        .addStatement("$N.setAccessible(true)", fieldModel.getName())                        .endControlFlow()
                         .addStatement("return($T)$N.get(mObject)", fieldModel.getType().typeName, fieldModel.getName())
                         .endControlFlow()
                         .beginControlFlow("catch (Exception e)");
@@ -125,7 +126,7 @@ public class GenerateSystemCode {
                     .addModifiers(Modifier.PUBLIC)
                     .returns(methodModel.getReturnType().typeName);
 
-            StringBuilder getMethodCode = new StringBuilder("$N = getMethod($S");
+            StringBuilder getMethodCode = new StringBuilder("$N =  mClass.getDeclaredMethod($S");
             StringBuilder invokeCode = new StringBuilder("$N.invoke(mObject");
             if (methodModel.getParameterTypes() != null && methodModel.getParameterTypes().size() > 0) {
                 for (int i = 0; i < methodModel.getParameterTypes().size(); i++) {
@@ -143,6 +144,7 @@ public class GenerateSystemCode {
             methodSpec.beginControlFlow("try")
                     .beginControlFlow("if($N == null)", methodModel.getName())
                     .addStatement(getMethodCode.toString(), methodModel.getName(), methodModel.getName())
+                    .addStatement("$N.setAccessible(true)", methodModel.getName())
                     .endControlFlow();
 
             if (methodModel.isVoid()) {

@@ -13,7 +13,6 @@ import me.ele.intimate.compiler.model.CName;
 public class TypeUtil {
     public static final String INTIMATE_PACKAGE = "me.ele.intimate";
 
-    public static final ClassName BASE_REF_IMPL = ClassName.get(INTIMATE_PACKAGE, "BaseRefImpl");
     public static final ClassName LOG = ClassName.get("android.util", "Log");
 
     public static String typeDefaultReturnCode(CName cName) {
